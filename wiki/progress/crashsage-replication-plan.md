@@ -7,6 +7,8 @@ tags: [progress, method, experiment, thesis-core]
 
 # CrashSage Replication Plan
 
+> **Scope note (2026-04-30):** Following the supervisor meeting, the primary thesis direction has shifted to a RAG-based approach with spatial analysis. This replication plan is now **baseline/comparison context** — the CrashSage fine-tuning pipeline will be run to provide a fine-tuned LLM comparison point, but it is no longer the central contribution. See [[wiki/progress/2026-04-30]] for the updated direction.
+
 Step-by-step plan for replicating the [[sources/crashsage]] framework on the [[entities/stats19]] dataset. Each step references the specific paper section so you can read alongside this guide. Where STATS19 differs from the original Washington State (WSDOT) data, adaptations are noted explicitly.
 
 **Paper:** CrashSage — DOI: [10.1016/j.ait.2025.100030](https://doi.org/10.1016/j.ait.2025.100030)
@@ -269,6 +271,7 @@ Document these as you go — each is a potential contribution or limitation:
 | QLoRA instead of full LoRA | GPU memory | Slight performance drop expected |
 | Skip augmentation (ablation) | Compute cost | Quantifies augmentation's value |
 | No Road Segment table join | STATS19 schema | Road info embedded in Accident table — should be neutral |
+| **Zero-shot baseline** | Paper omits this | Tests whether fine-tuning adds anything over base model; if zero-shot ≈ fine-tuned, the pipeline is hard to justify — either outcome is a finding |
 
 ---
 

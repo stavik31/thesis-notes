@@ -32,12 +32,12 @@ Scaling factor $L = 100$, binary threshold $b = 1$.
 
 ## Advantages Over Alternatives
 
-| Method | Advantage | Disadvantage |
-|--------|-----------|--------------|
-| Gradient-based (CrashSage) | Faithful to model internals; no out-of-dist inputs; computationally efficient | Approximation; assumes continuity in discrete token space |
-| Permutation importance (Tab-Text) | Model-agnostic; simple to interpret | Feature-level only, not word-level; independence assumption |
-| SHAP | Theoretically grounded (Shapley axioms) | Exponential complexity for exact; surrogate can misrepresent |
-| Attention weights | Intuitive visualization | Not faithful proxies for model reasoning (Jain & Wallace 2019) |
+| Method                            | Advantage                                                                     | Disadvantage                                                   |
+| --------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Gradient-based (CrashSage)        | Faithful to model internals; no out-of-dist inputs; computationally efficient | Approximation; assumes continuity in discrete token space      |
+| Permutation importance (Tab-Text) | Model-agnostic; simple to interpret                                           | Feature-level only, not word-level; independence assumption    |
+| SHAP                              | Theoretically grounded (Shapley axioms)                                       | Exponential complexity for exact; surrogate can misrepresent   |
+| Attention weights                 | Intuitive visualization                                                       | Not faithful proxies for model reasoning (Jain & Wallace 2019) |
 
 ## Key Empirical Findings (CrashSage)
 
@@ -70,3 +70,4 @@ This is potentially the most novel capability in the pipeline — word-level exp
 - [[concepts/llm-domain-adaptation]] — the fine-tuned model being explained
 - [[concepts/crash-severity-inference]] — the task being explained
 - [[entities/llama3-8b]] — the model whose gradients are computed
+

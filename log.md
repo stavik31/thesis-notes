@@ -5,6 +5,26 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-04-30] concept | RAG-Based Crash Risk Narrative Generation
+- Page: [[wiki/concepts/rag-narrative-generation]]
+- Overview updated: thesis argument rewritten around generation-first framing; literature gap explicitly stated
+- Notable: the thesis contribution is now clearly distinct from both prior papers — neither Tab-Text nor CrashSage produces human-readable output; this system does, grounded in retrieved historical evidence rather than baked weights
+
+## [2026-04-30] progress | Supervisor meeting — RAG + spatial analysis as primary direction
+- Page: [[wiki/progress/2026-04-30]]
+- Decisions extracted: thesis direction shifted from CrashSage replication to RAG with spatial analysis; CrashSage plan demoted to baseline context
+- Overview updated: thesis argument, state of project, key open questions all revised
+- Notable: three interconnected directions — correlation analysis to find which variables matter, RAG for LLM inference-time retrieval, spatial/hotspot analysis as both a standalone finding and a RAG retrieval dimension
+
+## [2026-04-28] query | Why fine-tune? Zero-shot ablation design
+- Page: [[wiki/queries/why-finetune-zero-shot-ablation]]
+- Replication plan updated: zero-shot baseline added to deviations table
+- Notable: augmentation is inference-only (no learning, label never shown); fine-tuning is where task knowledge is injected; paper omits zero-shot baseline entirely — running it costs almost nothing and any outcome (fine-tuned wins, zero-shot matches, CatBoost beats both) is a valid thesis finding
+
+## [2026-04-24] query | Tabular-to-text implementation guide for STATS19
+- Page: [[wiki/queries/tabular-to-text-stats19-implementation]]
+- Notable: Full sentence-level templates for all four narrative blocks (scene, road/conditions, vehicles, casualties); complete field skip list; label leakage warning on casualty_severity; output JSONL format defined; implementation order specified
+
 ## [2026-04-09] reference | STATS19 field reference written
 - Page: [[wiki/entities/stats19-field-reference]]
 - Notable: 503,475 collisions (2020–2024), severity split Fatal=7,491 / Serious=109,977 / Slight=386,007; recommended field inclusion list for narratives; join key structure documented

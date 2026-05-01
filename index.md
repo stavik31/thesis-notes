@@ -30,6 +30,7 @@ Content catalog — updated after every ingest, progress note, query filed, or l
 | [[wiki/concepts/multimodal-crash-modeling]] | Tab-Text's paradigm: fuse textual narratives with tabular features end-to-end |
 | [[wiki/concepts/llm-domain-adaptation]] | Fine-tuning vs. prompting LLMs for specialized traffic safety reasoning (CrashSage) |
 | [[wiki/concepts/gradient-based-attribution]] | Word-level explanation via Taylor approximation of token importance (CrashSage) |
+| [[wiki/concepts/rag-narrative-generation]] | Core thesis system: RAG-grounded local LLM generates human-readable crash risk narratives for drivers/practitioners |
 
 ---
 
@@ -51,6 +52,7 @@ Content catalog — updated after every ingest, progress note, query filed, or l
 |------|------|---------|
 | [[wiki/progress/2026-04-08]] | 2026-04-08 | First session: papers read, STATS19 confirmed as dataset, CrashSage replication set as first implementation target |
 | [[wiki/progress/crashsage-replication-plan]] | 2026-04-09 | Step-by-step CrashSage replication plan for STATS19, with paper section references and deviation log |
+| [[wiki/progress/2026-04-30]] | 2026-04-30 | Supervisor meeting: RAG + correlation analysis + spatial/location analysis confirmed as primary direction |
 
 ---
 
@@ -58,8 +60,9 @@ Content catalog — updated after every ingest, progress note, query filed, or l
 
 | Page | Question | Date |
 |------|----------|------|
-| *(none yet)* | | |
+| [[wiki/queries/tabular-to-text-stats19-implementation]] | How to implement tabular-to-text transformation for STATS19? | 2026-04-24 |
+| [[wiki/queries/why-finetune-zero-shot-ablation]] | Why fine-tune if the base model already understands crashes? And what baselines to run? | 2026-04-28 |
 
 ---
 
-*Last updated: 2026-04-09 | Total pages: 13*
+*Last updated: 2026-04-30 | Total pages: 17*
