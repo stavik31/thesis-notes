@@ -20,22 +20,24 @@ The supporting work: correlation analysis of STATS19 to establish which variable
 
 ## State of the Project
 
-**Phase:** Data analysis. Direction confirmed by supervisor (2026-04-30). Moving from planning into hands-on data work before any modelling.
+**Phase:** Phase 1 complete. Starting Phase 2 (RAG) from 2026-05-22.
 
 **Done:**
 - Wiki initialized, two foundation papers fully processed (Tab-Text, CrashSage)
-- Dataset confirmed: STATS19 (UK), 5 years, ~500k–700k records, 3 relational tables
-- Tabular-to-text narrative template designed for STATS19 schema
-- Zero-shot vs. fine-tuning ablation design documented
-- Supervisor meeting: RAG + spatial analysis confirmed as primary direction
+- Dataset confirmed: STATS19 (UK), 5 years, ~503k records, 3 relational tables
+- Tabular-to-text narrative template designed and executed — 503k narratives generated
+- LLM fine-tuning complete: `google/gemma-3-4b-it`, QLoRA r=16, 3 epochs, RTX 5080
+- Three-way baseline comparison complete on consistent 25,174-record test split:
+  - Zero-shot Gemma: Macro F1 0.149 (never predicts Fatal)
+  - XGBoost (tabular): Macro F1 0.350
+  - Fine-tuned Gemma: Macro F1 0.408 ← RAG backbone selected
+- Fine-tuned adapter confirmed as RAG backbone; XGBoost retained as tabular baseline
 
-**Compute:** RTX 5090 (32GB VRAM, lab). LLaMA3-8B LoRA fine-tuning confirmed feasible.
-
-**Next:**
-1. Download STATS19; run correlation analysis at casualty and accident level
-2. Spatial clustering (DBSCAN on lat/long) — confirm hotspots before investing in spatial features
-3. Draft RAG architecture and retrieval index design
-4. Establish baselines: CatBoost + zero-shot LLaMA3-8B
+**Next (Phase 2):**
+1. Build FAISS spatial index on crash narratives (lat/long retrieval)
+2. Build inference pipeline: GPS → spatial query → prompt → generated warning
+3. Evaluate: retrieval quality, factor accuracy, warning usefulness
+4. Final comparison: XGBoost label vs fine-tuned Gemma + RAG narrative
 
 ---
 

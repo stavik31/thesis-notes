@@ -5,6 +5,44 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-05-26] progress | RAG online phase complete — end-to-end pipeline working
+- Page: [[progress/2026-05-26]]
+- Decisions extracted: FastLanguageModel over AutoModelForCausalLM; token-length slicing for generation; coords lookup from collision.csv not metadata
+- Notable: system works end-to-end but generates generic warnings — prompt engineering identified as next step before evaluation; presentation prep starts now (due 2026-06-02)
+
+## [2026-05-25] progress | RAG offline phase complete — FAISS index built
+- Page: [[progress/2026-05-25]]
+- Decisions extracted: train+val only in corpus (test excluded for eval integrity); live API deferred to future work; IndexFlatL2 for simplicity; embedding cache added
+- Notable: offline phase complete — embeddings.npy (701MB), faiss_index.bin (701MB), metadata.jsonl (47MB) all saved to disk; query.py (online phase) is next session
+
+## [2026-05-21] plan | RAG Phase 2 plan written
+- Page: [[progress/RAG_PLAN]]
+- Notable: selected "filter then retrieve" approach (spatial radius first, semantic re-rank within subset); build order is 6 steps from encoding to generation; key watch-outs documented (context window, cold start, hallucination)
+
+## [2026-05-21] progress | Phase 1 complete — three-way baseline comparison done, RAG phase begins
+- Page: [[progress/2026-05-21]]
+- Decisions extracted: fine-tuned Gemma selected as RAG backbone; XGBoost retained as tabular baseline; zero-shot dropped from Phase 2; classification F1 is proxy metric only, not thesis claim
+- Notable: fine-tuned Gemma (0.408) > XGBoost (0.350) > zero-shot (0.149); zero-shot never predicts Fatal without domain adaptation; Serious is the hard class for all three systems; evaluation prompt fixed to "Reply with one word only." for consistency
+
+## [2026-05-20] progress | LLM fine-tuning complete — test results logged, zero-shot baseline next
+- Page: [[progress/2026-05-20]]
+- Decisions extracted: downsample over oversample; classification F1 is proxy metric only; Gemma3 Processor quirk documented
+- Notable: Macro F1 0.397 on test set (Slight 0.693, Serious 0.364, Fatal 0.134); model confirmed as gemma-3-4b-it 4B; zero-shot baseline is the immediate next step before drawing any conclusions
+
+## [2026-05-18] progress | LLM fine-tuning plan updated — model switch, training rationale, phase context
+- Page: [[progress/llm-finetune-plan]]
+- Changes: model updated from LLaMA3-8B to Gemma IT (non-thinking, 7–12B, exact ID TBC); training rationale section added explaining why classification is the proxy task; three-system comparison table added to Step 9; Phase 1/2 context section added; summarisation fine-tuning deferred to RAG phase
+- Notable: classification fine-tuning is Phase 1 only — same LoRA adapter plugs into RAG in Phase 2 with no retraining; summarisation fine-tuning is not a planned step, only a contingency if RAG output quality is poor
+
+## [2026-05-14] progress | LLM fine-tuning plan written
+- Page: [[progress/llm-finetune-plan]]
+- Notable: 9-step plan covering Unsloth install, LLaMA3-8B-Instruct access, train/val/test split, instruction format, LoRA config, training args, weighted sampling for class imbalance, adapter saving, and evaluation against XGBoost and zero-shot baselines.
+
+## [2026-05-14] concept | System Architecture — Location-Based Crash Risk Advisor
+- Page: [[wiki/concepts/system-architecture]]
+- Supersedes: [[concepts/rag-narrative-generation]] (earlier framing was generation-first; new framing is location-specific factor surfacing with advisory output)
+- Notable: thesis direction clarified — the system gives drivers location-specific warnings about which crash factors are historically overrepresented at their current location, not just narrative descriptions. Architecture has two phases: offline (tabular-to-text → LoRA fine-tune → FAISS index) and online (GPS → spatial retrieval → grounded LLM warning). Correlation analysis to be rerun with Mutual Information to fix Cramér's V limitations on high-cardinality fields.
+
 ## [2026-04-30] concept | RAG-Based Crash Risk Narrative Generation
 - Page: [[wiki/concepts/rag-narrative-generation]]
 - Overview updated: thesis argument rewritten around generation-first framing; literature gap explicitly stated
