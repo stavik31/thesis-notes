@@ -60,6 +60,8 @@ Content catalog — updated after every ingest, progress note, query filed, or l
 | [[wiki/progress/RAG_PLAN]] | 2026-05-21 | Step-by-step RAG Phase 2 plan: FAISS index, spatial filter, semantic retrieval, prompt construction, evaluation |
 | [[wiki/progress/2026-05-25]] | 2026-05-25 | RAG offline phase complete: FAISS index built, embeddings saved, query.py next |
 | [[wiki/progress/2026-05-26]] | 2026-05-26 | RAG online phase complete: end-to-end pipeline working; generic output identified; presentation prep begins |
+| [[wiki/progress/presentation-2026-06-02]] | 2026-05-31 | Full slide-by-slide presentation plan for 2026-06-02 class presentation |
+| [[wiki/progress/presentation-slides-8-10]] | 2026-05-31 | Draft content for slides 8–10: experimental setup, future work, summary |
 
 ---
 

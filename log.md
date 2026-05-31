@@ -5,6 +5,10 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-05-31] progress | Slides 8–10 drafted — experimental setup, future work, summary
+- Page: [[progress/presentation-slides-8-10]]
+- Notable: experimental slide covers fine-tuning results (3-way F1 table), RAG demo walkthrough, and suggested diagrams (SHAP bar, crash map, class distribution); future work and summary slides written slide-ready; two open questions pending (real vs generic RAG output, which diagrams to generate)
+
 ## [2026-05-31] progress | Presentation plan updated — slide content finalised with accurate paper numbers, data slide added, architecture narration notes added
 - Page: [[progress/presentation-2026-06-02]]
 - Notable: Related Studies slide rewritten with exact numbers (Tab-Text F1 0.4587, CrashSage F1 0.7361, RAG-Driver BDD-X SoTA); Data slide added covering STATS19 collection, structure, scale; Architecture slide confirmed as diagram-only with offline/online split; corpus vs query set terminology adopted; internal mechanics of Sentence Transformer and FAISS documented for verbal narration
