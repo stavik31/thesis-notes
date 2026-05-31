@@ -17,11 +17,13 @@ tags: [progress, presentation]
 - Training set downsampled to handle class imbalance
 - Evaluation on held-out query set (25,174 records)
 
-| System | Macro F1 |
-|---|---|
-| Zero-shot Gemma (no fine-tuning) | 0.149 |
-| XGBoost (tabular baseline) | 0.350 |
-| Fine-tuned Gemma-3-4b-it | 0.408 |
+| System | Macro F1 | Slight F1 | Serious F1 | Fatal F1 |
+|---|---|---|---|---|
+| Zero-shot Gemma (no fine-tuning) | 0.149 | — | — | 0.000 |
+| XGBoost (tabular baseline) | 0.350 | — | — | — |
+| Fine-tuned Gemma-3-4b-it | 0.408 | 0.693 | 0.364 | 0.134 |
+
+Zero-shot never predicts Fatal — without domain adaptation the model defaults to majority class. Fine-tuning is what unlocks minority class prediction.
 
 **Part 2: RAG System Demo**
 - Input: test crash narrative + GPS coordinates (simulating a live driver query)
