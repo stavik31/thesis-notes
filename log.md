@@ -5,6 +5,14 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-05-31] progress | Presentation plan updated — slide content finalised with accurate paper numbers, data slide added, architecture narration notes added
+- Page: [[progress/presentation-2026-06-02]]
+- Notable: Related Studies slide rewritten with exact numbers (Tab-Text F1 0.4587, CrashSage F1 0.7361, RAG-Driver BDD-X SoTA); Data slide added covering STATS19 collection, structure, scale; Architecture slide confirmed as diagram-only with offline/online split; corpus vs query set terminology adopted; internal mechanics of Sentence Transformer and FAISS documented for verbal narration
+
+## [2026-05-31] progress | Presentation plan written — 2026-06-02
+- Page: [[progress/presentation-2026-06-02]]
+- Notable: related work expanded to three tiers — crash classification (Tab-Text, CrashSage), AV explanation (RAG-Driver, RAG-SafeAdapt), then the gap; 9-slide structure finalised
+
 ## [2026-05-26] progress | RAG online phase complete — end-to-end pipeline working
 - Page: [[progress/2026-05-26]]
 - Decisions extracted: FastLanguageModel over AutoModelForCausalLM; token-length slicing for generation; coords lookup from collision.csv not metadata
