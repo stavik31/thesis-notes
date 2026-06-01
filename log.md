@@ -104,3 +104,7 @@ Parse with: `grep "^## \[" log.md | tail -10`
 - Directory structure: raw/papers/, raw/notes/, raw/misc/, raw/assets/, wiki/sources/, wiki/concepts/, wiki/entities/, wiki/progress/, wiki/queries/
 - Context: Senior undergraduate thesis, ~1 year scope
 - Status: Ready for first ingest
+
+## [2026-06-01] progress | Presentation slides updated — full evaluation plan, three-index ablation, limitations, end goal documented
+- Pages updated: [[progress/presentation-slides-8-10]], [[progress/presentation-2026-06-02]]
+- Notable: generic output named explicitly as known limitation (prompt not grounded in retrieved context); three-index ablation (spatial + feature-based + dense) documented as core experiment; RAGAS faithfulness + three retrieval quality proxies (feature overlap, severity distribution shift, held-out probe) documented as evaluation framework; joint embedding flagged as future work out of scope; 6-week implementation timeline locked
