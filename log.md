@@ -105,6 +105,21 @@ Parse with: `grep "^## \[" log.md | tail -10`
 - Context: Senior undergraduate thesis, ~1 year scope
 - Status: Ready for first ingest
 
+## [2026-06-02] progress | Speaker notes written — slides 1–7 complete, 8–12 pending
+- Page: [[progress/speaker-notes]]
+- Slide changes flagged: add Waze to slide 3; sharpen hypothesis on slide 4 (remove latency claim); add explicit gap bullet to slide 5; add LLM fine-tuning box to slide 7 offline diagram; fix slide 8 cutoff; add grounding limitation label to slide 10
+- Notable: slides 8–12 (live system, experiments Part 2, RAG demo, next phase, summary) to be written next session; checkpoint pushed to GitHub for remote access
+
+## [2026-06-02] plan | Six-week future implementation plan written
+- Page: [[progress/future-plan]]
+- Covers: (1) pre-aggregation grounding fix — summarise_retrieved() before build_prompt(); (2) RAGAS faithfulness evaluation across Variant A vs B vs B+agg on 50 queries; (3) three-index ablation — dense semantic (current) vs feature-based FAISS vs BM25 keyword, measured by feature overlap on 100 queries
+- Notable: grounding test run today confirmed prompt engineering works — Variant B achieved 3+ crash citations on every query vs 0 for bare prompt; pre-aggregation is the next step to produce the Expansionist's target output quality; this plan closes the research arc from hypothesis to measured result
+
+## [2026-06-02] experiment | Grounding test run — three prompt variants on 5 queries
+- Page: [[progress/future-plan]]
+- Result: Variant A (bare) = 0/49 crash refs; Variant B (force-cite) = 16/49, consistent 3-4 refs per query; Variant C (chain-of-thought) = 12/49, inconsistent (0 refs on 3/5 queries)
+- Notable: grounding is achievable via prompt engineering alone — the Contrarian's risk (task mismatch requiring retraining) did not materialise; Variant B is the reliable baseline to build on
+
 ## [2026-06-01] progress | Presentation slides updated — full evaluation plan, three-index ablation, limitations, end goal documented
 - Pages updated: [[progress/presentation-slides-8-10]], [[progress/presentation-2026-06-02]]
 - Notable: generic output named explicitly as known limitation (prompt not grounded in retrieved context); three-index ablation (spatial + feature-based + dense) documented as core experiment; RAGAS faithfulness + three retrieval quality proxies (feature overlap, severity distribution shift, held-out probe) documented as evaluation framework; joint embedding flagged as future work out of scope; 6-week implementation timeline locked
