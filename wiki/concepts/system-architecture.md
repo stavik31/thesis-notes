@@ -1,126 +1,185 @@
 ---
-title: "System Architecture — Location-Based Crash Risk Advisor"
+title: "System Architecture — Route-Level Crash Cause Briefing"
 type: concept
 tags: [thesis-core, method, architecture, rag, llm]
 sources: ["[[sources/crashsage]]", "[[sources/tab-text]]"]
-last_updated: "2026-05-21"
+last_updated: "2026-06-04"
 ---
 
-# System Architecture — Location-Based Crash Risk Advisor
+# System Architecture — Route-Level Crash Cause Briefing
+
+> **Redirected 2026-06-04.** This page previously described a real-time, per-GPS-point crash
+> advisor. Supervisor feedback ([[progress/prof-feedback]]) retired that design: it assumed
+> data exists everywhere, led with severity, and delivered output in the worst possible moment
+> (mid-drive). The current design below is **offline segment cause-profiling + a pre-trip route
+> briefing.** Some open design decisions are flagged explicitly rather than invented.
+>
+> **This design is an exploratory candidate, not a committed decision** (as of 2026-06-04). It
+> is being investigated because real-time delivery broke under the feedback — not because the
+> route-precompute approach is locked in. Other delivery models remain open.
 
 ## The Problem
 
-Drivers have no access to location-specific crash history in a form they can act on. Generic road safety advice ("drive carefully in wet conditions") ignores the fact that risk is highly localised — a specific junction may be disproportionately dangerous at night, or a particular stretch of road may have an unusual rate of side-impact collisions from vehicles failing to give way.
+Drivers have no access to localized knowledge of *why* crashes happen on the roads they are
+about to travel. Risk is concentrated at specific **segments** and tied to specific
+**conditions** — a bend that produces wet-surface skidding in the dark; a junction that
+produces failure-to-give-way collisions. That signal exists in historical records but is
+locked in tables no driver can read.
 
-The system answers one question for any road location:
+The system answers one question, for a route the driver is *about to* take:
 
-> *"Based on everything that has happened at this spot historically, what should a driver specifically watch out for right now?"*
+> *"On the route I'm about to drive, which segments have a history of specific,
+> condition-linked crash patterns I should anticipate — given when I'm driving?"*
 
-This is not severity prediction. It is **location-specific factor surfacing with advisory output**.
+This is **not** severity prediction and **not** a real-time alert. It is **offline,
+segment-level cause profiling, surfaced as a pre-trip briefing.**
 
 ---
 
-## Why Narratives Over Structured Features
+## Three design commitments (and why)
 
-The correlation analysis of STATS19 (Cramér's V, Spearman) showed effect sizes below 0.2 for every individual feature against casualty severity. This is the empirical case for moving beyond structured fields:
+### 1. Cause, not severity
+The deliverable is *what to watch for and why* (condition→mechanism), not a Slight/Serious/
+Fatal label. Severity is the *outcome*; what transfers to a live driver is the
+*condition→mechanism link*. Severity classification survives only as a sanity-check that the
+model understands crash data — see [[concepts/crash-severity-inference]].
 
-- No single feature tells you enough on its own
-- Risk emerges from combinations: wet road + night + bend + T-junction is dangerous in a way none of those fields captures individually
-- Both Tab-Text and CrashSage demonstrate empirically that converting structured crash records into narrative text allows an LLM to pick up on these factor interactions that structured models miss
+### 2. Pre-trip, not real-time
+Real-time per-point LLM generation fails three ways at once:
+- **Latency** — generation takes seconds; the warning arrives after the hazard.
+- **Distraction** — an in-drive interruption competes with driving; distraction is itself a
+  leading crash cause, so the delivery mechanism fights the safety goal.
+- **Fixed radius is wrong** — relevant lookahead is a *time horizon*, not a distance. A 1 km
+  radius is 36 s at 100 km/h but 6 min at 10 km/h.
 
-**The revised analysis** (to be rerun) will use Mutual Information instead of Cramér's V — MI handles high-cardinality categorical variables correctly and does not deflate on sparse contingency tables. A full pairwise MI matrix across top features will also be computed to identify redundant features before building the retrieval index.
+Computing the **entire route up front** removes all three: no in-drive latency, no in-drive
+interruption, and the segment (not a speed-dependent radius) becomes the unit.
+
+### 3. Only speak where data exists
+Crashes are spatially sparse (~503k over 5 years across the whole UK network). The old design
+silently assumed local data everywhere; it only demoed where clusters happened to exist. The
+new design makes sparsity the unit of analysis: **the system only profiles segments with a
+statistically meaningful crash cluster, and stays silent elsewhere.** Silence is correct, not
+a failure.
 
 ---
 
 ## Architecture Overview
 
-The system has two phases: an offline build phase (done once) and an online inference phase (per driver query).
-
 ```
-OFFLINE
+OFFLINE (build once)
 ─────────────────────────────────────────────────────────────
 STATS19 (collision + vehicle + casualty tables)
     │
     ▼
 [1] Tabular-to-text conversion
-    Convert each crash record into a natural language narrative
-    using STATS19-specific templates (scene, road conditions,
-    vehicles involved, casualties). One narrative per crash.
+    Each crash → natural-language narrative (scene, road/conditions,
+    vehicles, mechanics). One narrative per crash.  [done]
     │
     ▼
-[2] LLM fine-tuning (LoRA on LLaMA3-8B, RTX 5090)
-    Fine-tune on crash narratives + severity labels.
-    Goal: the model learns crash-domain language — what factor
-    combinations mean, how conditions interact, what outcomes
-    follow from what contexts. This is domain adaptation, not
-    a deployed classifier.
+[2] Domain-adapted LLM (LoRA on gemma-3-4b-it)
+    Severity-trained adapter, used as domain adaptation for
+    verbalization — NOT a deployed classifier.  [done; objective under review]
     │
     ▼
-[3] Spatial retrieval index (FAISS)
-    Index all crash narratives by lat/long coordinates.
-    Each entry: crash narrative text + metadata (severity,
-    date, top contributing factors).
+[3] Spatial segmentation
+    Partition the network into segments (road link / grid cell /
+    DBSCAN cluster — OPEN DECISION) and assign each crash to one.
+    │
+    ▼
+[4] Segment cause-profiling
+    For each segment with enough crashes, compute which conditions/
+    mechanisms are OVERREPRESENTED vs the network baseline
+    (Mutual Information + base-rate ratio + significance test).
+    Output: per-segment profile, e.g.
+      "wet surface ×3.1, darkness ×2.4, skidding ×2.8 vs baseline".
+    │
+    ▼
+[5] Retrieval index over segment crashes (FAISS)
+    Narrative + structured-feature + keyword variants (ablation).
 
 
-ONLINE (per driver query)
+TRIP-PLANNING (per route, before departure)
 ─────────────────────────────────────────────────────────────
-Driver GPS coordinates
+Origin + Destination + Departure time
     │
     ▼
-[4] Spatial retrieval
-    Query FAISS index for K nearest crashes within radius R.
-    Retrieved crashes are already in narrative form.
+[6] Route → segments
+    Map the route to the segments it passes through; keep only the
+    high-risk ones (those with a significant profile).
     │
     ▼
-[5] Prompt construction
-    System prompt: road safety expert context
-    Retrieved context: K crash narratives from this location
-    Query: current conditions (time of day, weather if available)
+[7] Per-segment retrieval + pre-aggregation
+    For each high-risk segment, retrieve its crashes, pre-aggregate
+    the cause profile, and FILTER/weight by conditions matching the
+    departure context (time of day, season, weather if available).
     │
     ▼
-[6] Fine-tuned LLM generates warning
-    "At this location, most historical crashes involved vehicles
-    failing to give way at the junction in low-light conditions.
-    Approach slowly and check for traffic from the right."
+[8] LLM verbalization
+    The LLM turns the structured per-segment profiles into a
+    prioritized, non-redundant route briefing — its job is synthesis
+    and phrasing, not counting (counting is done in code).
     │
     ▼
-Driver receives location-specific advisory
+Pre-trip route briefing (read/heard before driving)
+  + optional HEAT MAP (per-cause risk surface — macro artifact)
 ```
 
 ---
 
 ## Component Details
 
-### [1] Tabular-to-text conversion
-Already designed — see [[concepts/tabular-to-text-transformation]]. Templates cover four narrative blocks: scene (location, time, conditions), road and environment, vehicles involved, casualties. Raw STATS19 codes are decoded to readable descriptions before conversion. Label leakage fields are excluded.
+### [1] Tabular-to-text — done
+See [[concepts/tabular-to-text-transformation]] and the field-level decisions in
+[[entities/stats19-field-reference]]. Under the pivot, lean harder on the **condition and
+mechanism** fields (road_surface, light, weather, junction_detail, vehicle_manoeuvre,
+skidding_and_overturning, first_point_of_impact) — these are the substrate for "cause."
 
-### [2] LLM fine-tuning
-LoRA fine-tuning on LLaMA3-8B. Training signal: crash narrative → severity label (same as CrashSage replication). The fine-tuning is not the deployed classifier — it is domain adaptation. The model learns what crash narratives mean so that at inference time it can synthesise retrieved local crash narratives into coherent, grounded advice rather than generic output.
+### [2] Domain-adapted LLM — done, objective under review
+LoRA on `gemma-3-4b-it`, trained narrative→severity. Kept as domain adaptation for now.
+**Open decision:** if verbalization quality is poor, re-train on a cause-summarization
+objective (narrative → condition/mechanism summary) instead of severity. Decision deferred
+until after the grounding test — see [[concepts/llm-domain-adaptation]].
 
-This is the key difference from a frozen base model: a frozen LLaMA3-8B knows English but does not know that "vehicle failing to give way (code 2)" at a "T-junction (code 3)" in "darkness: no lighting (code 7)" is a high-risk pattern. Fine-tuning injects that domain knowledge.
+### [3] Spatial segmentation — OPEN DECISION
+The new core methodological choice. Candidates: road-link (semantically clean, needs map
+matching), uniform grid cell (simple, arbitrary boundaries), DBSCAN clusters of crash points
+(data-driven, variable size). Whatever is chosen defines what a "segment" means everywhere
+downstream.
 
-### [3] Retrieval indices (three variants, all built from the same narrative corpus)
+### [4] Segment cause-profiling — the heart of the system
+For each segment, compare its condition/mechanism distribution against the network baseline
+and surface what is overrepresented, with a significance test so rare-but-real patterns are
+kept and noise is dropped. This is where the [[concepts/crash-severity-inference]] correlation
+work (Mutual Information over Cramér's V) is promoted from feature selection to the actual
+product. **Open decision:** minimum crash count per segment, and the significance threshold —
+Fatal at 1.5% is data-starved, so fatal-specific profiles need care.
 
-**Spatial index** — FAISS index on lat/long coordinates. Retrieves crashes within a radius R of the driver's location. Simple and interpretable: every retrieved crash can be explained ("this happened 200m from here").
+### [5] Retrieval indices — survives from [[progress/future-plan]]
+Three variants built from the same corpus, now scoped to within-segment (or
+condition-similar) retrieval rather than a 1 km GPS radius:
+- **Dense semantic** (all-MiniLM-L6-v2 + FAISS) — current
+- **Feature-based** (structured one-hot vectors) — condition similarity
+- **BM25 keyword** — non-neural floor
+Compared in the ablation; a hybrid re-ranker (late fusion of semantic + feature overlap) is
+the planned best configuration.
 
-**Feature-based index** — FAISS index on the top XGBoost features (speed_limit, light_conditions, road_type, junction_control, urban_or_rural_area, weather_conditions). Retrieves crashes with matching road conditions regardless of location. Useful when a relevant crash happened slightly further away but in identical conditions.
-
-**Dense vector index** — each crash narrative is encoded into a vector using a sentence transformer model (e.g. `all-MiniLM-L6-v2`). FAISS retrieves the K nearest vectors to the encoded query scenario. The model learns what "similar crashes" means from the narratives themselves — capturing subtle combinations of factors that explicit feature matching misses. A crash 2km away in semantically identical conditions may rank higher than one 50m away in unrelated conditions. Computationally heavier (embed 503k narratives once, store vectors) but runs fast at inference.
-
-All three indices are built once offline. At inference, each can be queried independently or combined (e.g. spatial filter → re-rank by dense similarity).
-
-### [4–6] Online inference
-Retrieval radius R and number of retrieved cases K are hyperparameters to tune. Too small an R and there are not enough local crashes to synthesise from. Too large and the crashes are no longer local. K affects context window usage and narrative coherence.
-
-The LLM prompt instructs the model to attribute every claim to retrieved cases and not invent statistics. Hallucination risk is managed by keeping the generation grounded: the model is a narrator of what the retrieved records say, not a free generator.
+### [6–8] Trip-planning pipeline
+Pre-aggregation ([[progress/future-plan]] Part 1) is now load-bearing: the LLM receives
+*computed* per-segment statistics plus exemplar crashes and only has to write. Conditioning on
+departure context is the fix for the "context is missing regardless of what happened"
+critique. **Open decision:** briefing delivery format (text summary, audio pre-brief,
+glanceable map) and whether the heat map is a co-deliverable or a separate analysis figure.
 
 ---
 
 ## What the System Does Not Do
 
-- It does not predict whether a crash will happen (no probability output)
-- It does not classify severity for a hypothetical crash
-- It does not generate advice for locations with no crash history in STATS19 (cold-start problem — flag to user)
+- No real-time / in-drive generation (replaced by pre-trip precompute; real-time is future work)
+- No per-GPS-point advisory (the unit is a segment on a planned route)
+- No crash-probability or severity prediction as output (severity = sanity-check only)
+- No output for segments without a statistically significant cluster (stays silent — by design)
+- No claim of *causation* — surfaces overrepresented *patterns*, framed honestly as such
 
 ---
 
@@ -128,49 +187,43 @@ The LLM prompt instructs the model to attribute every claim to retrieved cases a
 
 | What to evaluate | How |
 |---|---|
-| Retrieval quality | Are retrieved crashes actually from this location? Precision@K on spatial proximity. |
-| Factor accuracy | Are the surfaced factors overrepresented at this location vs. national STATS19 baseline? |
-| Warning usefulness | Human evaluation rubric: is the advice actionable and location-specific? |
-| Temporal holdout | Train on crashes up to date X, evaluate warnings against crashes that occur after X at the same locations. |
-| Baseline comparison | CatBoost (tabular severity), zero-shot LLaMA3-8B (no retrieval, no fine-tuning), CrashSage (SFT classifier). |
+| Profile validity | Are surfaced conditions genuinely overrepresented vs the network baseline? (base-rate ratio + significance test) |
+| Retrieval quality | Do retrieved crashes share the query segment's conditions? Feature overlap on 5 key fields. |
+| Grounding / faithfulness | RAGAS faithfulness across bare vs force-cite vs pre-aggregation prompts (50 queries). |
+| Temporal holdout | Profile segments on crashes up to date X; test whether profiles predict the conditions of post-X crashes at the same segments. |
+| Usefulness / theory of change | Does a pre-trip cause briefing plausibly change driver anticipation? Human rubric or proxy — the open justification question. |
+| Severity sanity-check | Fine-tuned vs XGBoost vs zero-shot F1 — confirms domain understanding only, never the headline. |
 
-The temporal holdout is the most important evaluation — it tests whether the system surfaces factors that predict future crash patterns at a location, not just describes the past.
+The temporal holdout is the strongest objective test; the theory-of-change is the hardest open
+question (see [[progress/prof-feedback]]).
 
-### Ablation Study
-
-The thesis findings come from comparing these system variants:
-
-| System variant | What it tests |
-|---|---|
-| Spatial only | Does location alone give useful retrieval? |
-| Feature only | Do explicit conditions alone work without location? |
-| Spatial + feature | Does combining both outperform either? |
-| Dense vector only | Does learned semantic similarity outperform explicit feature matching? |
-| Spatial + dense vector | Does adding location constraint to semantic retrieval improve results? |
-| Zero-shot LLM (no retrieval) | Does retrieval even help at all? |
-| Fine-tuned LLM + RAG (best retrieval) | Does domain adaptation improve generation quality? |
-
-Each row is a standalone comparison. The middle block (spatial vs. feature vs. dense vs. hybrid) is the core retrieval research question. The bottom two rows evaluate the generation side.
+### Retrieval ablation
+Reframed from [[progress/future-plan]] Part 3: dense vs feature-based vs keyword (and the
+α-weighted hybrid re-ranker), scored by feature overlap and RAGAS faithfulness, to recommend
+which retrieval strategy surfaces the most condition-relevant evidence for a segment.
 
 ---
 
 ## Build Order
 
-1. ~~**Rerun data analysis**~~ — done (XGBoost SHAP confirmed top features)
-2. ~~**Tabular-to-text conversion**~~ — done (503k narratives in `narratives_raw.jsonl`)
-3. ~~**Fine-tune LLM**~~ — done (`gemma-3-4b-it`, QLoRA r=16, checkpoint-3500, Macro F1 0.408)
-4. ~~**Baselines**~~ — done (zero-shot 0.149, XGBoost 0.350, fine-tuned 0.408)
-5. **Build FAISS index** — index narrative corpus by lat/long ← current
-6. **Build inference pipeline** — spatial query → prompt construction → generation
-7. **Evaluation** — retrieval quality, factor accuracy, warning usefulness, XGBoost comparison
+1. ~~Tabular-to-text conversion~~ — done (503k narratives)
+2. ~~Domain-adapt LLM~~ — done (`gemma-3-4b-it`, QLoRA r=16); objective under review
+3. ~~Severity baselines~~ — done (now sanity-check only)
+4. ~~Build FAISS index~~ — done
+5. **Define segment unit + significance test** ← new core decision
+6. **Segment cause-profiling** (pre-aggregation as the product)
+7. **Route → segments → pre-trip briefing** pipeline
+8. **Heat map** (per-cause risk surface)
+9. **Evaluation** — profile validity, faithfulness, retrieval ablation, temporal holdout, usefulness
 
 ---
 
 ## Related
 
-- [[concepts/rag-narrative-generation]] — earlier framing, now superseded by this page
+- [[progress/prof-feedback]] — the redirection that produced this design
+- [[progress/future-plan]] — pre-aggregation + RAGAS + retrieval ablation, now serving this architecture
+- [[concepts/rag-narrative-generation]] — earliest framing, superseded
 - [[concepts/tabular-to-text-transformation]] — narrative templates (step 1)
-- [[concepts/llm-domain-adaptation]] — fine-tuning rationale (step 2)
-- [[concepts/crash-severity-inference]] — correlation analysis feeding feature selection
-- [[entities/stats19]] — primary dataset
-- [[entities/llama3-8b]] — LLM backbone
+- [[concepts/llm-domain-adaptation]] — fine-tuning rationale (step 2), objective under review
+- [[concepts/crash-severity-inference]] — correlation analysis, promoted to cause-profiling
+- [[entities/stats19]] / [[entities/stats19-field-reference]] — dataset + condition/mechanism fields

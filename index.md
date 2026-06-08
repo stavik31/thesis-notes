@@ -64,6 +64,8 @@ Content catalog — updated after every ingest, progress note, query filed, or l
 | [[wiki/progress/presentation-slides-8-10]] | 2026-05-31 | Draft content for slides 8–10: experimental setup, future work, summary |
 | [[wiki/progress/future-plan]] | 2026-06-02 | Six-week implementation plan: grounding fix (pre-aggregation), RAGAS evaluation, three-index retrieval ablation, hybrid re-ranker |
 | [[wiki/progress/speaker-notes]] | 2026-06-02 | Speaker notes for presentation — slides 1–7 complete, 8–12 pending |
+| [[wiki/progress/prof-feedback]] | 2026-06-04 | Post-presentation supervisor redirection: drop real-time, pivot to route-precompute cause-briefing; severity demoted; overview + architecture flagged for rewrite |
+| [[wiki/progress/NEW_FIX_PROF]] | 2026-06-08 | Supervisor-facing direction & architecture proposal (NOT FINAL): driver-focused, offline-precompute + live lookup, significance-tested segment patterns, invisible-risk rule, training/RAG depth, temporal-holdout eval, open decisions |
 
 ---
 
@@ -76,4 +78,4 @@ Content catalog — updated after every ingest, progress note, query filed, or l
 
 ---
 
-*Last updated: 2026-05-21 | Total pages: 20*
+*Last updated: 2026-06-08 | Total pages: 22*

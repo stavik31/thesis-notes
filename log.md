@@ -5,6 +5,57 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-06-08] ⏸ RESUME POINT — read this first
+- **Where we are:** Direction worked out in discussion and written up for the supervisor in
+  [[progress/NEW_FIX_PROF]] (**NOT FINAL** — a discussion draft to bring to the prof). The
+  delivery model evolved from "pre-trip briefing" to **driver-focused, offline-precompute +
+  live lookup**: heavy work (segmentation → significance test → profiling → per-condition LLM
+  lines) is offline; the live system reads current conditions and plays the matching
+  pre-written line (no live LLM, no latency, voice/terse/rare delivery).
+- **Key reframes locked in discussion (not yet in the formal wiki pages):** (1) only speak
+  when the risk is *invisible* from the road; (2) warn about *patterns*, not *events*;
+  (3) silence where there's no significant cluster is correct, not a failure; (4) the
+  500-crashes-per-route problem is solved by a funnel — crashes are offline training data
+  that collapse to ~1–2 segment warnings, never processed live.
+- **Anchor claim:** existing nav reports *that* a crash happened; this explains the
+  *non-obvious, condition-specific pattern* and what it implies.
+- **What's captured:** [[progress/NEW_FIX_PROF]] (new direction + architecture + training/RAG
+  depth + eval + open decisions), [[progress/prof-feedback]] (the feedback this answers),
+  [[wiki/overview]] + [[concepts/system-architecture]] (earlier pivot rewrite — now need
+  updating to match NEW_FIX_PROF), [[progress/future-plan]] (pre-agg/RAGAS/ablation, now core).
+- **Next decision when resuming (still all OPEN):** (a) **segment definition** — road link /
+  grid / DBSCAN — gates everything; (b) **significance test + threshold** vs which baseline;
+  (c) **training objective** — keep severity adapter as domain adaptation + add RAFT/DPO, or
+  retrain on cause-summarisation (decide after a grounding test); (d) **why-LLM-vs-template**
+  defence; (e) delivery form sanity check (voice vs roadside sign).
+- **After prof meeting:** fold whatever he agrees to into [[concepts/system-architecture]] and
+  [[wiki/overview]], then start on the segment definition.
+
+## [2026-06-08] progress | New direction + architecture proposal written for supervisor
+- Page: [[progress/NEW_FIX_PROF]]
+- Decisions explored (NOT committed): driver-focused in-vehicle delivery; offline-precompute +
+  live-lookup (lookup table indexed by STATS19 condition categories, not a fixed recording);
+  segment significance test as the new methodological core; invisible-risk + pattern-not-event
+  rules as the scope filters; severity demoted to sanity-check; sign/authority directions
+  considered and set aside as weaker-novelty
+- Notable: resolved the "system isn't useful" spiral by bounding scope (speak only on
+  significant + non-obvious + condition-matched patterns, stay silent otherwise); 1,000-crashes-
+  per-route handled by an offline funnel (segment → significance → profile → obviousness →
+  condition gate → prioritise) ending in 1–2 warnings; added research depth axes (RAFT, DPO,
+  three-index ablation, cross-encoder rerank, segment-level borrowing for sparse classes);
+  evaluation headline = temporal holdout (train yrs 1–4, validate yr 5). Doc is explicitly a
+  discussion draft for the supervisor, not a final decision.
+
+## [2026-06-04] concept | Overview + System Architecture rewritten for the pivot
+- Pages updated: [[wiki/overview]], [[concepts/system-architecture]]
+- Notable: overview thesis argument restated around localized cause communication + pre-trip route briefing (general method, STATS19 as case study); removed the "competitive on implied severity prediction" framing that contradicted the feedback; system-architecture replaced the real-time per-GPS-point pipeline with offline segment cause-profiling + pre-trip briefing (+ optional heat map), with open design decisions (segment unit, significance threshold, FT objective, delivery format) flagged explicitly rather than invented; future-plan's pre-aggregation/RAGAS/ablation re-scoped to serve the new architecture
+
+## [2026-06-04] progress | Supervisor feedback — post-presentation redirection
+- Page: [[progress/prof-feedback]]
+- Decisions extracted: drop real-time; pivot to offline segment cause-profiling + pre-trip route briefing (end-to-end precompute); severity demoted to sanity-check; fine-tuning objective decision deferred until after grounding test
+- Pages flagged for rewrite: [[wiki/overview]] (still claims "competitive on implied severity prediction" — now contradicts feedback), [[concepts/system-architecture]] (online per-GPS-point pipeline superseded)
+- Notable: feedback was about justification + usability, not implementation; the unit of analysis shifts from GPS point → road segment, the deliverable from severity warning → conditioned cause briefing, and delivery from real-time → pre-trip; most infrastructure (narratives, FAISS, MI analysis, pre-aggregation) survives and the pre-aggregation grounding fix is now the core of the system
+
 ## [2026-05-31] progress | Slides 8–10 drafted — experimental setup, future work, summary
 - Page: [[progress/presentation-slides-8-10]]
 - Notable: experimental slide covers fine-tuning results (3-way F1 table), RAG demo walkthrough, and suggested diagrams (SHAP bar, crash map, class distribution); future work and summary slides written slide-ready; two open questions pending (real vs generic RAG output, which diagrams to generate)

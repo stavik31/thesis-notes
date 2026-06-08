@@ -9,3 +9,10 @@ Thumbs.db
 # Editor
 *.swp
 *.swo
+
+# Python env / build caches (do not commit)
+.venv/
+unsloth_compiled_cache/
+
+# Editor
+.vscode/
