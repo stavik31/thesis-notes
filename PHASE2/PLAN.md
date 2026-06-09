@@ -184,6 +184,22 @@ deep the moment a paper looks like a `home` or `integration` hit.
   `overview.md` and `system-architecture.md` (they've correctly been waiting for the
   direction to settle).
 
+### Model usage policy
+
+This work is reasoning-heavy, not volume-heavy — so use a strong model only where it
+changes the outcome. Cost is driven more by context size (re-reading raw PDFs) than by
+model choice; ingest each paper into a concise summary and don't re-read the raw afterward.
+
+- **Sonnet 4.6 (default):** abstract triage (keep/skip/tag), ingesting papers into source
+  pages, index/log bookkeeping, cross-linking, routine concept Q&A.
+- **Opus 4.8 (switch in for these):** deep-read of the closest-twin / `home`-candidate
+  papers, the home-field decision, the end-of-week positioning memo, anything going in
+  front of the supervisor.
+- **Avoid Haiku** for any judgment call (research-fit, positioning) — too weak there.
+- **Fast mode** is speed, not cost — it's still Opus, same token cost.
+- Switch with `/model`. Rule of thumb: `/model sonnet` for gathering, `/model opus` for
+  the 2–4 decisions that shape the thesis.
+
 ---
 
 ## What Phase 1 leaves us (assets that survive into any direction)

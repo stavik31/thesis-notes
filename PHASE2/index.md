@@ -50,6 +50,7 @@ Updated after every ingest, progress note, query filed, or lint pass.
 | Page | Date | Summary |
 |------|------|---------|
 | [[wiki/progress/2026-06-09]] | 2026-06-09 | Phase 2 kickoff: supervisor pushed for literature grounding; phases split; reading week planned |
+| [[wiki/progress/journal-triage]] | 2026-06-09 | Journal triage log; T-ITS complete (2 deep reads + 5 abstract refs); Expert Systems w/ Applications next |
 
 ---
 

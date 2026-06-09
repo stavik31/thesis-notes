@@ -7,17 +7,28 @@ Parse with: `grep "^## \[" log.md | tail -10`
 ---
 
 ## [2026-06-09] ⏸ RESUME POINT — read this first
-- **Where we are:** Phase 2 just started. After the 2026-06-09 supervisor meeting the
-  project pivoted from *building* to *grounding*. The system works but reads as
-  "artificial" because it has no research home — the **why/context is missing**.
-- **The task:** spend the next week reading good-journal papers to find the field this
-  work contributes to (hypotheses: risk assessment = home, route planning = applied-to,
-  AVs = aspirational). Eval is fine per the supervisor — do **not** keep polishing it.
-- **Structure change:** all prior work moved to `../PHASE1/` (frozen archive); Phase 2
-  is a fresh wiki here. `CLAUDE.md` updated to point the schema at `PHASE2/`.
-- **Deliverable:** end-of-week positioning memo (which field, cited gap, framing,
-  baselines) → then realign overview + architecture.
-- **The plan in full:** [[PHASE2/PLAN]].
+- **Where we are:** Phase 2 = *grounding* mode (find the research home so the system stops
+  reading as "artificial"). **Tier 1, Journal 1 (IEEE T-ITS) is done.** Two papers deep-read
+  and recorded in `raw/papers/tier1_journal1/T-ITS-abstract-refs.md` (full reads on top,
+  5 abstract-only refs below).
+- **What the two reads established:** direction is *confirmed* (multimodal/LLM crash work is
+  live + segment risk-for-drivers is accepted), home field located = **road-safety risk
+  assessment (SPF / Empirical Bayes / Highway Safety Manual)** layered with multimodal ML.
+  Sobering finding: our route-risk-map *deliverable already exists* (Jiang 2022) → our novelty
+  is narrower than the NEW_FIX_PROF framing and lives ONLY in **condition-conditioning + the
+  natural-language WHY + significance/overrepresentation**.
+- **The sharpened gap (carry this):** the field either encodes crash text → *predicts* an
+  outcome (event-level, enforcement — Li 2025) or aggregates crashes → *numeric risk score*
+  → heat map (segment-level, routing — Jiang 2022). **Neither conditions on the live
+  situation, neither explains *why* in natural language.** That white space is the thesis.
+- **Test question to carry into every future paper:** *is anyone doing condition-conditioned,
+  explanation-generating segment risk?* Every "no" is a brick in the gap.
+- **NEXT:** Tier 1, Journal 2 = **Expert Systems with Applications**. Search:
+  `crash severity prediction`, `road safety decision support`, `accident risk machine learning`.
+- **Working style (locked):** record papers as lightweight per-journal md entries (full title
+  + progress phrase), NOT the full wiki INGEST workflow. Model: Sonnet for triage, Opus for
+  deep reads. Progress so far ≈ 15% of the reading. Correct road, long to go.
+- **The plan in full:** [[PHASE2/PLAN]] · triage state: [[wiki/progress/journal-triage]].
 
 ## [2026-06-09] structure | Project split into PHASE1 (archive) + PHASE2 (active)
 - Moved all Phase 1 work into `../PHASE1/` via `git mv` (history preserved); kept
@@ -27,6 +38,25 @@ Parse with: `grep "^## \[" log.md | tail -10`
   protocol now point at PHASE2.
 - Notable: fresh-but-linked chosen over continue-in-place — Obsidian resolves
   `[[wikilinks]]` vault-wide so PHASE1 stays reachable while the reframe gets a clean slate.
+
+## [2026-06-09] reading | T-ITS Tier-1 deep reads — multimodal twin + safe route mapping
+- Record: `raw/papers/tier1_journal1/T-ITS-abstract-refs.md` (full reads on top + 5 abstract refs)
+- Li et al. 2025 (Multimodal crash risk of violations): closest twin; validates text+tabular+LLM
+  direction; clean inversion (they encode→predict event-level for enforcement; we generate→explain
+  segment-level for drivers). Borrow: TabNet, text-categorisation pipeline, imbalance handling.
+- Jiang et al. 2022 (Safe Route Mapping): the bigger find — roots us in SPF/Empirical Bayes/HSM
+  (the risk-assessment home) AND shows our route-risk-map deliverable already exists → novelty
+  must live in condition-conditioning + NL why + significance.
+- Notable: gap now sharply defined across both papers; our raw idea is NOT novel on its own —
+  this is good to learn now. Next journal: Expert Systems with Applications.
+
+## [2026-06-09] progress | Journal triage log started — T-ITS shortlist
+- Page: [[wiki/progress/journal-triage]]
+- Workflow set: search → shortlist titles → abstracts (decide) → full text for keepers →
+  deep-read + ingest, one journal at a time.
+- T-ITS: 7 of ~25 results kept for abstract review (multimodal-crash-risk twin, risk-assessment
+  survey, XAI severity, vehicle-group prediction, safe-route mapping, in-vehicle warning, GAN
+  imbalance); rest skipped at title stage as off-layer micro-AV/control work.
 
 ## [2026-06-09] plan | Journal exploration strategy added to PHASE2/PLAN
 - Page: [[PHASE2/PLAN]]
