@@ -92,14 +92,14 @@ These are the reframes that turn "this isn't useful" into a defensible scope.
 You **never** process 1,000 crashes live. They are offline training data that collapse
 into a handful of segment profiles. The funnel:
 
-| Stage | What happens | Effect |
-|---|---|---|
-| 1. Segment | Snap each crash to its road segment (a route = a sequence of segments) | 1,000 crashes → ~30 segments |
-| 2. **Significance** | Keep only segments where some condition is **statistically overrepresented vs the network baseline** (rate-ratio / chi-square) | ~30 → ~5 |
-| 3. Profile | Summarise each survivor's crashes into its dominant condition→mechanism pattern | ~40 crashes → 1 line |
-| 4. Obviousness filter | Drop anything inferable from road geometry | ~5 → ~3 |
-| 5. Condition gate *(live)* | Only fire segments whose conditions match **now** | 3 → 1–2 |
-| 6. Prioritise *(live)* | Cap at top 1–2 by significance × severity so the driver isn't overloaded | final output |
+| Stage                      | What happens                                                                                                                   | Effect                       |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| 1. Segment                 | Snap each crash to its road segment (a route = a sequence of segments)                                                         | 1,000 crashes → ~30 segments |
+| 2. **Significance**        | Keep only segments where some condition is **statistically overrepresented vs the network baseline** (rate-ratio / chi-square) | ~30 → ~5                     |
+| 3. Profile                 | Summarise each survivor's crashes into its dominant condition→mechanism pattern                                                | ~40 crashes → 1 line         |
+| 4. Obviousness filter      | Drop anything inferable from road geometry                                                                                     | ~5 → ~3                      |
+| 5. Condition gate *(live)* | Only fire segments whose conditions match **now**                                                                              | 3 → 1–2                      |
+| 6. Prioritise *(live)*     | Cap at top 1–2 by significance × severity so the driver isn't overloaded                                                       | final output                 |
 
 **Stage 2 (significance) is the new methodological core.** It is what separates "crashes
 happen everywhere there's traffic" from "this specific place has a *non-random* pattern."
