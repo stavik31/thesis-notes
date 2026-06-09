@@ -70,31 +70,47 @@ Use your judgment — if a Socratic question would just frustrate, explain inste
 
 ## Directory Structure
 
+**The project is split into phases.** As of 2026-06-09 the thesis took a new direction
+(literature grounding + application context — see `PHASE2/PLAN.md`). Phase 1 is frozen as
+a read-only archive; **Phase 2 is the active working area** and all new wiki work happens
+there. All operation paths below (`index.md`, `log.md`, `wiki/`, `raw/`) are now **relative
+to `PHASE2/`** unless stated otherwise.
+
 ```
 thesis/
-├── CLAUDE.md               ← this file (schema + rules)
-├── index.md                ← content catalog of all wiki pages
-├── log.md                  ← append-only chronological record
-├── raw/                    ← source documents (READ ONLY — never modify)
-│   ├── assets/             ← locally downloaded images
-│   ├── papers/             ← academic PDFs / clipped articles
-│   ├── notes/              ← user-written progress notes, daily summaries
-│   └── misc/               ← anything else
-└── wiki/
-    ├── overview.md         ← evolving thesis argument + state of the project
-    ├── sources/            ← one summary page per ingested paper/article
-    ├── concepts/           ← ideas, theories, methods, frameworks
-    ├── entities/           ← people, orgs, datasets, tools, models
-    ├── progress/           ← weekly summaries, milestone pages
-    └── queries/            ← filed answers to research questions
+├── CLAUDE.md               ← this file (schema + rules) — root level, governs both phases
+├── PHASE1/                 ← ARCHIVE (READ ONLY — never modify). Everything built up to
+│   │                          2026-06-09: narratives, fine-tune, FAISS RAG, analyses.
+│   ├── index.md  log.md       Reference it via [[wikilinks]] (Obsidian resolves by filename
+│   ├── raw/  analysis/  data/  across the vault, so PHASE1 stays linked), but do not edit.
+│   └── wiki/ …
+└── PHASE2/                 ← ACTIVE. New direction. This is where all new work goes.
+    ├── PLAN.md             ← the Phase 2 plan (literature grounding) — read for context
+    ├── index.md            ← content catalog of Phase 2 wiki pages
+    ├── log.md              ← append-only chronological record (Phase 2)
+    ├── raw/                ← source documents (READ ONLY — never modify)
+    │   ├── papers/         ← academic PDFs / pasted papers
+    │   ├── notes/          ← user-written progress notes, daily summaries
+    │   └── misc/           ← anything else
+    └── wiki/
+        ├── overview.md     ← evolving thesis argument + state of the project
+        ├── sources/        ← one summary page per ingested paper/article
+        ├── concepts/       ← ideas, theories, methods, frameworks
+        ├── entities/       ← people, orgs, datasets, tools, models
+        ├── progress/       ← weekly summaries, milestone pages
+        └── queries/        ← filed answers to research questions
 ```
 
 **Rules:**
-- `raw/` is immutable. Never write, edit, or delete files there.
-- `wiki/` is entirely mine to create and maintain.
+- **`PHASE1/` is a frozen archive — never write, edit, or delete anything inside it.** Treat
+  it like `raw/`: link to it for context, but all new work lands in `PHASE2/`.
+- `PHASE2/raw/` is immutable. Never write, edit, or delete files there.
+- `PHASE2/wiki/` is entirely mine to create and maintain.
 - File names: lowercase, hyphens for spaces. E.g. `neural-scaling-laws.md`.
 - All wiki pages use `.md` extension.
-- Sub-sort raw sources into `raw/papers/`, `raw/notes/`, or `raw/misc/` when dropping them in.
+- Sub-sort raw sources into `PHASE2/raw/papers/`, `raw/notes/`, or `raw/misc/` when dropping them in.
+- Cross-phase links use `[[slug]]` (Obsidian resolves by filename vault-wide); when filenames
+  could collide, use the relative path form `[[../PHASE1/wiki/...]]`.
 
 ---
 
@@ -278,9 +294,11 @@ When the user asks for a lint/health-check (or proactively after ~10 ingests):
 
 At the start of every session:
 1. Read `CLAUDE.md` (this file).
-2. Read `index.md` to orient on what's in the wiki.
-3. Read the last 5–10 entries of `log.md` to understand recent activity.
-4. Then respond to the user.
+2. Read `PHASE2/PLAN.md` to recall the current direction.
+3. Read `PHASE2/index.md` to orient on what's in the active wiki.
+4. Read the last 5–10 entries of `PHASE2/log.md` to understand recent activity.
+5. `PHASE1/` is archive context only — consult it when a question reaches back into prior work, but never edit it.
+6. Then respond to the user.
 
 ---
 
