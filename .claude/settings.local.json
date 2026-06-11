@@ -8,7 +8,9 @@
       "Bash(du:*)",
       "Read(//home/vik-esoc/Desktop/thesis-code/data/**)",
       "Bash(zip stats19-raw.zip casualty.csv collision.csv vehicle.csv)",
-      "Bash(/home/vik-esoc/Desktop/thesis/.venv/bin/pip install *)"
+      "Bash(/home/vik-esoc/Desktop/thesis/.venv/bin/pip install *)",
+      "WebFetch(domain:doi.org)",
+      "WebFetch(domain:linkinghub.elsevier.com)"
     ]
   }
 }

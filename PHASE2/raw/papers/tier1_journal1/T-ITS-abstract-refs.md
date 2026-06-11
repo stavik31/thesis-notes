@@ -33,6 +33,32 @@ idea is novel on its own. ~15% through the planned reading.
 (segment-level, routing — Jiang 2022). Neither conditions risk on the live situation, and
 neither explains *why* in natural language. That white space is the thesis.
 
+- **Reflective LLM Prompt Optimisation for Interpreting GNN Predictions in Traffic Forecasting** — Zhang, Kim, He, Yildirimoglu, 2025 (ITSC) — found via `LLM transportation` keyword, 2026-06-11
+  *Where it lies in the progress: the first real grounding for the EXPLANATION LAYER — not the
+  domain (traffic-speed forecasting, not crash) but the problem. It names our exact risk: LLMs
+  translating a numeric attribution into NL produce "fluent yet unfaithful" narratives and will
+  confidently rationalise invalid inputs. Their fix is a two-phase design: (Phase 1) optimise a
+  prompt that VALIDATES whether the importance scores are even trustworthy (supervised on
+  real-vs-rank-permuted variants); (Phase 2) freeze that validator, then optimise the explanation
+  prompt — validate-then-explain, refuse if invalid. Multi-agent reflection (Analysis→Reflection→
+  Synthesis, M iters) does the prompt tuning. Results: Phase 1 acc 0.40→0.75 (peak M=3 then
+  DECLINED — unstable); Phase 2 top-3 grounding overlap 0.45→0.72; ablation removing Phase 1
+  drops faithfulness 0.68→0.42. Faithfulness eval is mostly qualitative/expert — they admit hard
+  metrics are future work.*
+  *Four takeaways: (1) Borrow their three faithfulness dimensions — Score Grounding, Contextual
+  Coherence, Causal Plausibility — as our explanation-eval rubric, plus the overlap-score proxy
+  (does the narrative cite the actual overrepresented conditions). (2) We can do their validity
+  gate BETTER: their "validity" is an unreliable LLM-judge (0.75, unstable) on a synthetic proxy;
+  OURS is a real statistical test (Empirical Bayes / significance / overrepresentation). Claim:
+  significance-gated explanation — the LLM only explains patterns that passed a real test,
+  removing their hardest failure mode. (3) Their "Causal Plausibility" is our landmine: discipline
+  the NL to say "overrepresented under wet+dark," NOT "caused by" — we report association, not
+  causation. (4) Strategic: with Gyawali, this is the 2nd ITS paper doing LLM-explains-ML-for-
+  professionals, so the generic "LLM explanation layer" is now PRIOR ART. Our explanation novelty
+  must be pinned to: condition-conditioned statistical overrepresentation of crash risk at the
+  segment level, significance-gated. Tag: `borrow` + `related-work`. A methodological neighbour,
+  not a home.*
+
 ---
 
 ## Abstract-only — triaged, worth citing
@@ -56,3 +82,29 @@ abstract gave sufficient signal.
 
 - **Wasserstein Generative Adversarial Network to Address the Imbalanced Data Problem in Real-Time Crash Risk Prediction** — Man, Quddus, Theofilatos, Yu, Imprialou, 2022
   *WGAN method directly borrowable for Fatal-class imbalance (1.5% of STATS19); UK M1 Motorway data — Quddus is a credible UK crash author.*
+
+- **Safe and Sound: Driver Safety-Aware Vehicle Re-Routing Based on Spatiotemporal Information** — de Souza, Braun, Botega, Villas, Loureiro, 2020
+  *Risk-aware re-routing, but "risk" = criminal events, not crash risk. RNN predicts dynamic future risk scores; personalized re-routing lets each vehicle choose which risk types to avoid. Reinforces the Jiang-2022 pattern (aggregate→numeric score→route) with dynamic prediction instead of static SPF/EB — still no condition-conditioning on situational factors, no NL explanation. Another brick in the gap; weak as a cited baseline due to domain mismatch (crime vs. crash).*
+
+- **Integrating LLMs With ITS: Recent Advances, Potentials, Challenges, and Future Directions** — Mahmud, Hajmohamed, Almentheri, Alqaydi, Aldhaheri, Khalil, Saeed, 2025
+  *Highest-cited LLM+ITS survey (71). Application taxonomy = traffic flow, detection, AD, sign recognition, pedestrian detection — crash-risk/segment explanation absent. Gap-by-omission citation.*
+
+- **LLeCaT: LLM Enhanced Causality-Aware Traffic Accidents Post-Effects Prediction** — Yang, Tao, Ge, Fan, Akerkar, Koshizuka, 2025
+  *LLM extracts semantics from accident records to predict the crash's causal effect on future traffic-state forecasts (post-crash disruption), not pre-crash segment risk. Wrong direction, but validates "LLM on accident text" as workable.*
+
+- **Large Language Models in Transportation: A Comprehensive Bibliometric Analysis of Emerging Trends, Challenges, and Future Research** — Hassan, Kabir, Jusoh, An, Negnevitsky, Li, 2025 (IEEE Access)
+  *161-paper bibliometric; +25.74%/yr growth — good "nascent, fast-growing field" stat. Themes = autonomous mobility, traffic optimization, sustainability; no risk-explanation category. Largely redundant with Mahmud — cite one, not both.*
+
+- **Prompt to Path: LLM-Guided Multi-Objective Eco-Routing via Geohash-Compressed Urban Graphs (GB-MOBR)** — Bagosher, Al Jawarneh, Foschini, Bellavista, 2025 (FLLM)
+  *LLM parses NL preferences → routing objective weights for eco/environmental bike routing. Opposite direction of NL use from ours (input-parsing vs. output-explaining), off-domain. Weak related-work.*
+
+- **In-Progress: Augmenting Explainable AI with LLMs to Enhance User Trust in ITS** — Gyawali, Jiang, Huang, 2025 (SPW) — read full text 2026-06-11, knocked down from deep-read
+  *3-page workshop demo on V2X misbehavior (cybersecurity), but architecturally a near-mirror of our
+  Phase 1 stack: black-box XGBoost → SHAP top-3 features → RAG over a vector DB → 7B instruct LLM
+  generates NL explanation, no fine-tuning. Independent evidence that SHAP→RAG→LLM→NL is an
+  established ITS pattern (so the architecture shape is prior art, not a contribution). BUT weak
+  execution — no explanation evaluation at all (they measure only the detector: 98% acc, suspicious
+  AUC≈1.0 on simulated data), and the "RAG" is just a lookup table of canned attack blurbs. The low
+  bar it cleared is the opening: rigor on the explanation layer (Zhang's faithfulness rubric + our
+  significance gate + real STATS19) is where we beat this tier. Pairs with [[Zhang 2025]] as the 2nd
+  explanation-layer brick. Tag: `related-work` (architecture-mirror).*

@@ -50,7 +50,7 @@ Updated after every ingest, progress note, query filed, or lint pass.
 | Page | Date | Summary |
 |------|------|---------|
 | [[wiki/progress/2026-06-09]] | 2026-06-09 | Phase 2 kickoff: supervisor pushed for literature grounding; phases split; reading week planned |
-| [[wiki/progress/journal-triage]] | 2026-06-09 | Journal triage log; T-ITS complete (2 deep reads + 5 abstract refs); Expert Systems w/ Applications next |
+| [[wiki/progress/journal-triage]] | 2026-06-09 | Journal triage log; Tier 1 Journals 1-3 (T-ITS, ESWA, EAAI) complete; Knowledge-Based Systems (Journal 4) keyword 1/3 done |
 
 ---
 
@@ -72,4 +72,4 @@ Updated after every ingest, progress note, query filed, or lint pass.
 
 ---
 
-*Last updated: 2026-06-09 | Phase 2 pages: 1*
+*Last updated: 2026-06-11 | Phase 2 pages: 2*
