@@ -13,6 +13,12 @@ Updated after every ingest, progress note, query filed, or lint pass.
 |------|-------------|
 | [[PHASE2/PLAN]] | The Phase 2 plan: why we restarted, the week of reading, target journals, keywords, deliverable |
 
+## Positioning Memo (the deliverable)
+
+| Page | Description |
+|------|-------------|
+| [[PHASE2/positioning-memo]] | **★ PRIMARY DELIVERABLE.** Synthesis of the whole reading week: the research home (CRM), the cited gap, the novelty pin, the keystone baseline (Gao 2024), the full evidence map, and how to present it to the supervisor |
+
 ## Overview
 
 | Page | Description |
@@ -50,7 +56,7 @@ Updated after every ingest, progress note, query filed, or lint pass.
 | Page | Date | Summary |
 |------|------|---------|
 | [[wiki/progress/2026-06-09]] | 2026-06-09 | Phase 2 kickoff: supervisor pushed for literature grounding; phases split; reading week planned |
-| [[wiki/progress/journal-triage]] | 2026-06-09 | Journal triage log; Tier 1 Journals 1-3 (T-ITS, ESWA, EAAI) complete; Knowledge-Based Systems (Journal 4) keyword 1/3 done |
+| [[wiki/progress/journal-triage]] | 2026-06-09 | Journal triage log; Tier 1 core four (T-ITS, ESWA, EAAI, KBS) all complete — next: Tier 2 or AAP/AMAR |
 
 ---
 
@@ -72,4 +78,4 @@ Updated after every ingest, progress note, query filed, or lint pass.
 
 ---
 
-*Last updated: 2026-06-11 | Phase 2 pages: 2*
+*Last updated: 2026-06-16 | Phase 2 pages: 3 (+ positioning memo)*

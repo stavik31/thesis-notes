@@ -1,8 +1,13 @@
 # KBS — Tier 1, Journal 4 Reading Record
 
-**Progress so far:** keyword 1 (`crash prediction`) triaged. 1 full-text deep
-read (TrafficRiskGPT — the closest near-miss of the entire sweep). 6
-abstract-only refs. 1 term-collision skip.
+**Progress so far:** all 3 keywords triaged — KBS complete. Keyword 1
+(`crash prediction`): 1 full-text deep read (TrafficRiskGPT — the closest
+near-miss of the entire sweep), 6 abstract-only refs, 1 term-collision skip.
+Keyword 2 (`risk assessment framework`): 0 new (1 dup of TrafficRiskGPT, rest
+off-domain noise — mirrors EAAI kw2's 0/67). Keyword 3 (`knowledge extraction
+traffic`): 1 new abstract-only ref (below), 2 dups (kw1's severity-CNN+BiLSTM
+and proactive-DSS papers; kw2's dropped road-infrastructure paper), rest
+traffic-flow-forecasting / cyber-"traffic" noise.
 
 ---
 
@@ -152,6 +157,19 @@ abstract-only refs. 1 term-collision skip.
   — confirms CSM saturation with attention-based pseudo-interpretability. Gap
   unbeaten.*
 
+- **A Real-Time Explainable Traffic Collision Inference Framework Based on
+  Probabilistic Graph Theory** (Liu, Lan, Guan, KBS 2021)
+  *Real-time collision-occurrence probability from social-media-derived traffic
+  features (event-level COM). "Explainable" = the causal probabilistic graph
+  itself — structure learned via top-K BDeu score, near-linear time complexity.
+  A THIRD explanation form (alongside saliency maps and NL narratives): the
+  causal graph IS the explanation, never NL. P/R/F1≈0.75 validates the collision
+  prediction, not the graph as an explanation. `related-work` (confirms COM/CRM
+  split) + `borrow` (BDeu-score Bayesian-network structure learning — possible
+  alternative/complement to a chi-square-style significance gate; add to the
+  statistical-methods shelf next to Empirical Bayes — full-text deferred to the
+  significance-gate design phase). Gap unbeaten.*
+
 ---
 
 ## Skipped (term-collision)
@@ -172,16 +190,36 @@ abstract-only refs. 1 term-collision skip.
 
 ## Skipped at title stage (off-layer)
 
-~100 of ~110 results. Clusters: finance/trading/forex (~10); cybersecurity/
-malware/intrusion-detection incl. in-vehicle IDS (~10); robotics/UAV/swarm
-navigation (~8); generic ML methods/optimization with no stated domain —
-surrogate optimization, feature transforms, kernel methods, NAS, clustering
-(~20); AV/ADAS micro-layer incl. driver drowsiness/gaze, lane-change RL, merging
-(~6); pure traffic-flow/speed forecasting (~5); software engineering/NLP/
-multimedia off-domain — bug prediction, vulnerability detection, rumor
-detection, video indexing (~15); long miscellaneous tail — medical (EEG seizure
-detection), sports betting, ontology evolution, energy forecasting, road-surface
-maintenance, aviation human-factors/SPI, agent-based simulation, etc. (~25).
+**Keyword 1** (~100 of ~110 results). Clusters: finance/trading/forex (~10);
+cybersecurity/malware/intrusion-detection incl. in-vehicle IDS (~10);
+robotics/UAV/swarm navigation (~8); generic ML methods/optimization with no
+stated domain — surrogate optimization, feature transforms, kernel methods,
+NAS, clustering (~20); AV/ADAS micro-layer incl. driver drowsiness/gaze,
+lane-change RL, merging (~6); pure traffic-flow/speed forecasting (~5);
+software engineering/NLP/multimedia off-domain — bug prediction, vulnerability
+detection, rumor detection, video indexing (~15); long miscellaneous tail —
+medical (EEG seizure detection), sports betting, ontology evolution, energy
+forecasting, road-surface maintenance, aviation human-factors/SPI,
+agent-based simulation, etc. (~25).
+
+**Keyword 2** (`risk assessment framework`, ~108 results, 1 dup of
+TrafficRiskGPT). Rest off-domain: finance/credit/audit/stock (~15);
+medical/health risk — diabetes, mental health, retinopathy, sleep, cancer
+(~12); industrial/construction/oil-gas/tunnel/structural safety (~6);
+maritime/aviation (~4); cybersecurity/blockchain/privacy (~10); generic
+ML/federated-learning/fault-diagnosis/agriculture "framework" papers with no
+risk-transport content (~60). 2 marginal titles considered and dropped
+(supply-chain-explainability SLR — different domain, stretch citation;
+risk-informed road-infrastructure design — climate/structural, not crash
+risk). Mirrors EAAI kw2's 0/67 pattern.
+
+**Keyword 3** (`knowledge extraction traffic`, ~100 results). 2 dups (Alhaek
+severity CNN+BiLSTM and the proactive-DSS paper, both from kw1; the
+road-infrastructure paper dropped in kw2). 1 new abstract (above). Rest:
+traffic-FLOW forecasting — GCN/transformer/Mamba spatiotemporal variants
+(~45); network/cyber "traffic" — malicious-traffic detection, IDS,
+encrypted-traffic classification (~25); AV perception/ATC/signal-control
+off-layer (~15); generic NLP/KG/CV (~15).
 
 ---
 
