@@ -70,26 +70,37 @@ Use your judgment — if a Socratic question would just frustrate, explain inste
 
 ## Directory Structure
 
-**The project is split into phases.** As of 2026-06-09 the thesis took a new direction
-(literature grounding + application context — see `PHASE2/PLAN.md`). Phase 1 is frozen as
-a read-only archive; **Phase 2 is the active working area** and all new wiki work happens
-there. All operation paths below (`index.md`, `log.md`, `wiki/`, `raw/`) are now **relative
-to `PHASE2/`** unless stated otherwise.
+**The project is split into phases.** As of 2026-06-17 the thesis took its current direction
+(**risk-aware route planning + a vehicle-type data niche, LLM dropped** — see `PHASE3/PLAN.md`).
+Phases 1 and 2 are frozen as read-only archives; **Phase 3 is the active working area** and all
+new wiki work happens there. All operation paths below (`index.md`, `log.md`, `wiki/`, `raw/`) are
+now **relative to `PHASE3/`** unless stated otherwise.
+
+- **Phase 1** (`PHASE1/`) = the built system (narratives, severity LoRA, FAISS RAG, analyses).
+- **Phase 2** (`PHASE2/`) = the reading week that searched for a home for an *LLM-NL-output*
+  thesis (CRM home + significance-gated NL explanation). **Superseded** at the 2026-06-17
+  supervisor meeting (LLM cut). Read-only; consult its positioning memo as the audit trail of
+  the pivot.
 
 ```
 thesis/
-├── CLAUDE.md               ← this file (schema + rules) — root level, governs both phases
-├── PHASE1/                 ← ARCHIVE (READ ONLY — never modify). Everything built up to
-│   │                          2026-06-09: narratives, fine-tune, FAISS RAG, analyses.
-│   ├── index.md  log.md       Reference it via [[wikilinks]] (Obsidian resolves by filename
-│   ├── raw/  analysis/  data/  across the vault, so PHASE1 stays linked), but do not edit.
+├── CLAUDE.md               ← this file (schema + rules) — root level, governs all phases
+├── PHASE1/                 ← ARCHIVE (READ ONLY). The built system up to 2026-06-09:
+│   │                          narratives, fine-tune, FAISS RAG, analyses.
+│   ├── index.md  log.md       Reference via [[wikilinks]] (Obsidian resolves by filename
+│   ├── raw/  analysis/  data/  vault-wide, so PHASE1 stays linked), but do not edit.
 │   └── wiki/ …
-└── PHASE2/                 ← ACTIVE. New direction. This is where all new work goes.
-    ├── PLAN.md             ← the Phase 2 plan (literature grounding) — read for context
-    ├── index.md            ← content catalog of Phase 2 wiki pages
-    ├── log.md              ← append-only chronological record (Phase 2)
+├── PHASE2/                 ← ARCHIVE (READ ONLY). The reading week for the LLM-NL-output
+│   │                          thesis (CRM home). Superseded 2026-06-17. Audit trail of the
+│   └── …                      pivot lives in PHASE2/positioning-memo.md. Do not edit.
+└── PHASE3/                 ← ACTIVE. Current direction (risk-aware routing + vehicle-type
+    ├── PLAN.md             ← the Phase 3 plan (journals, keywords, tiers) — read for context
+    ├── positioning-memo.md ← LIVING statement of the current direction — update as reading proceeds
+    ├── index.md            ← content catalog of Phase 3 wiki pages
+    ├── log.md              ← append-only chronological record (Phase 3)
     ├── raw/                ← source documents (READ ONLY — never modify)
-    │   ├── papers/         ← academic PDFs / pasted papers
+    │   ├── papers/         ← academic PDFs / pasted papers + lightweight per-journal records
+    │   │                      (incl. carry_over.md = surviving Phase 2 papers)
     │   ├── notes/          ← user-written progress notes, daily summaries
     │   └── misc/           ← anything else
     └── wiki/
@@ -102,10 +113,10 @@ thesis/
 ```
 
 **Rules:**
-- **`PHASE1/` is a frozen archive — never write, edit, or delete anything inside it.** Treat
-  it like `raw/`: link to it for context, but all new work lands in `PHASE2/`.
-- `PHASE2/raw/` is immutable. Never write, edit, or delete files there.
-- `PHASE2/wiki/` is entirely mine to create and maintain.
+- **`PHASE1/` and `PHASE2/` are frozen archives — never write, edit, or delete anything inside
+  them.** Link to them for context; all new work lands in `PHASE3/`.
+- `PHASE3/raw/` is immutable. Never write, edit, or delete files there.
+- `PHASE3/wiki/` is entirely mine to create and maintain.
 - File names: lowercase, hyphens for spaces. E.g. `neural-scaling-laws.md`.
 - All wiki pages use `.md` extension.
 - Sub-sort raw sources into `PHASE2/raw/papers/`, `raw/notes/`, or `raw/misc/` when dropping them in.
@@ -294,10 +305,10 @@ When the user asks for a lint/health-check (or proactively after ~10 ingests):
 
 At the start of every session:
 1. Read `CLAUDE.md` (this file).
-2. Read `PHASE2/PLAN.md` to recall the current direction.
-3. Read `PHASE2/index.md` to orient on what's in the active wiki.
-4. Read the last 5–10 entries of `PHASE2/log.md` to understand recent activity.
-5. `PHASE1/` is archive context only — consult it when a question reaches back into prior work, but never edit it.
+2. Read `PHASE3/PLAN.md` and `PHASE3/positioning-memo.md` to recall the current direction.
+3. Read `PHASE3/index.md` to orient on what's in the active wiki.
+4. Read the last 5–10 entries of `PHASE3/log.md` to understand recent activity.
+5. `PHASE1/` and `PHASE2/` are archive context only — consult them when a question reaches back into prior work (PHASE2/positioning-memo.md is the audit trail of the 2026-06-17 pivot), but never edit them.
 6. Then respond to the user.
 
 ---

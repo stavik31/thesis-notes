@@ -2,9 +2,17 @@
 title: "Phase 2 Positioning Memo — Securing the Research Home"
 type: memo
 date: "2026-06-16"
-status: PRIMARY DELIVERABLE — the output of the Phase 2 reading week
-tags: [phase2, positioning, thesis-core, related-work, decision]
+status: SUPERSEDED (2026-06-17) — kept as the audit trail of the pivot. See ../PHASE3
+tags: [phase2, positioning, related-work, decision, superseded]
 ---
+
+> **⚠️ SUPERSEDED 2026-06-17.** At the third supervisor meeting the LLM/NL-explanation
+> direction this memo argues was **cut** (faithfulness unsolvable in the time; language
+> distracting + per-person). The thesis moved to **risk-aware route planning with a
+> vehicle-type data niche** — see `../PHASE3/PLAN.md` and `../PHASE3/positioning-memo.md`.
+> The CRM home, the Gao 2024 baseline, and the condition-conditioning evidence survive as
+> the *risk engine*; the LLM half is now future-work. This file is retained as the audit
+> trail of how the position got here — do not act on its recommendations.
 
 # Phase 2 Positioning Memo — Securing the Research Home
 
