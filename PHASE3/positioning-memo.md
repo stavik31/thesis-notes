@@ -159,12 +159,19 @@ explanation/faithfulness/LLM half is **future-work**, not core.
 
 1. **The niche — vehicle type confirmed, or combine with a 2nd axis from the start?**
    (Leaning: vehicle type primary, weather/time secondary where data allows.)
-2. **Segment definition** — road link vs grid vs DBSCAN (gates the whole build).
-3. **Significance test** — candidates now: chi-square overrepresentation (Wang lineage) vs Empirical
-   Bayes vs Bayesian network vs **Colocation Quotient (Hu 2018 — per-type spatial overrepresentation,
-   Monte-Carlo significance, network-distance, MAUP-aware)** vs case-crossover matched control (Wei).
+2. **Segment definition** — road link vs grid vs DBSCAN (gates the whole build). *Cheap HSM-aligned
+   option found (Pathivada 2025): **homogeneous segmentation** — cut where road class / # lanes /
+   posted speed / AADT changes.*
+3. **Significance test** — candidates now: chi-square overrepresentation (Wang lineage) vs **Empirical
+   Bayes (Pathivada 2025 — HSM-standard, RTM-corrected high-crash ranking)** vs Bayesian network vs
+   **Colocation Quotient (Hu 2018 — per-type spatial overrepresentation, Monte-Carlo significance,
+   network-distance, MAUP-aware)** vs case-crossover matched control (Wei).
    Baseline = network-wide vs road-class-specific; min-crash threshold per cell. (CLQ is the most
    *spatial* and most directly per-type — strong contender, ties to Phase-1 spatial assets.)
+3b. **Per-type count family (new, Pathivada 2025).** Don't assume Gao's ZITD (over-dispersion +
+   zero-inflation, tuned on aggregate) transfers to a vehicle-type slice: motorcycle-only segment
+   crashes were **under-dispersed**, where NB/ZITD fail and **CMP/HTCMP** is the right family.
+   → decide the count model *per type, after measuring dispersion in the probe*, not network-wide.
 4. **Auxiliary datasets** — OS road network + Met Office weather + DfT AADF (exposure) are
    high-value, low-cost. A second crash dataset only if a chosen niche is data-starved.
 5. **Output form** — ranked routes vs risk-map overlay vs both.
@@ -175,6 +182,11 @@ explanation/faithfulness/LLM half is **future-work**, not core.
    and how many secondary axes (#1) are affordable. Run it in *parallel* with the first niche-premise
    reads, not after. Linked sub-risk: **per-type exposure** — does DfT AADF resolve by vehicle type
    so per-type risk isn't confounded with per-type volume?
+   - *Data point now in hand (Pathivada 2025, AAP):* on a real motorcycle-only segment slice the
+     count regime was **under-dispersed** (variance < mean) — the opposite of aggregate. So the probe
+     must report **per-type dispersion + zero rate** (not just "is it sparse"), because the answer
+     picks the count family (ZITD vs CMP/HTCMP, see #3b). Their study controlled zeros to ~20%, so it
+     does *not* settle STATS19's true per-type zero rate — that's still ours to measure.
 
 ---
 
@@ -204,8 +216,10 @@ explanation/faithfulness/LLM half is **future-work**, not core.
 |---|---|---|
 | Zhu et al. 2025 (T-ITS) | ⚠ vehicle-**group** (not type); method-cousin + Abdel-Aty anchor, **weak premise** | **deep-read full text (2026-06-18)** — [[T-ITS-deepread]] |
 | **Hu, Zhang, Shelton 2018 (TR-C)** | **method to GENERATE the spatial-divergence-by-type evidence**: Colocation Quotient (GCLQ+LCLQ) = per-category spatial significance test. (Premise only analogical — combines ped+cyclist, not motor-vehicle classes.) Gap is thin partly because colocation-in-transport-safety is itself new (2018) | **deep-read full text (2026-06-18)** — [[TR-C-deepread]] |
+| **Pathivada et al. 2025 (AAP)** | ★ **motorcycle-specific segment SPF** (Kentucky rural multilane). **Per-type slice flips the count regime → UNDER-dispersion** (NB/ZITD inappropriate; needs CMP/HTCMP). Donates CMP family + EB high-crash ranking + homogeneous segmentation. Aggregate-AADT exposure; single-type (no divergence); no routing | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
+| **Barabino et al. 2021 (AAP)** | ★★ **structural precedent**: per-vehicle-type (bus) **R = H·V·E** (freq × severity × exposure) per section → summed → route risk → quartile 4-level ranking. Closest existing per-type→route-risk→ranked-output pipeline (bus-only, fixed lines = screening, not routing). Donates risk decomposition + section-sum + binary-severity collapse for rare fatals | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
 | Freeway-segment LCA/LPA (AAP) | heterogeneity by geometry | abstract only |
-| *(to be read — THE priority: motorcycle/HGV segment-risk)* | | this pass |
+| *(still thin: motorcycle/HGV **spatial-divergence** — different segments risky for different types — not yet found; AAP keywords 3–5 pending)* | | this pass |
 
 > **Reframe (2026-06-18):** the spatial-divergence-by-type premise being thin in the literature is
 > *not* evidence it's false — the spatial tool (CLQ) is recent and nobody applied it per-vehicle-class.
@@ -220,6 +234,7 @@ explanation/faithfulness/LLM half is **future-work**, not core.
 | Wei 2024 (AAP) | gate ancestor #1: case-crossover matched-control design (quasi-Poisson DLM/DLNM) | **deep-read full text (2026-06-18)** — [[AAP-deepread]] |
 | Wang 2025 (AAP) | gate ancestor #2: χ²-CI Bayesian network (Bonferroni; BDs for sparse cells) | **deep-read full text (2026-06-18)** — [[AAP-deepread]] |
 | **Hu 2018 (TR-C)** | gate candidate #3: **Colocation Quotient** (per-type spatial overrepresentation, Monte-Carlo significance, network-distance, MAUP-aware) — ties to Phase-1 spatial/Cramér's-V assets | **deep-read (2026-06-18)** — [[TR-C-deepread]] |
+| **Pathivada 2025 (AAP)** | gate/screening candidate #4: **Empirical Bayes** high-crash-location ranking (HSM-standard, RTM-corrected via SPF dispersion) + **CMP/HTCMP** as the per-type count engine when a slice is under-dispersed (≠ Gao's ZITD) | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
 
 ---
 

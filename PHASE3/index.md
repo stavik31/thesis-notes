@@ -37,6 +37,8 @@ mirroring the Phase 2 working style.
 | `raw/papers/tier1/tier1_journal1/T-ITS-abstract-refs.md` | IEEE T-ITS | **Reading pass (2026-06-18):** all 4 keywords swept; 0 full-text keepers, 1 weak abstract keeper (lead-vehicle-type TTC). Gap-test brick: no vehicle-type segment-risk/routing on T-ITS |
 | `raw/papers/tier1/tier1_journal2/TR-C-abstract-refs.md` | TR Part C | **Reading pass (2026-06-18), keyword 1/3 (`safe route planning`):** the routing home. 3 promoted to full-text, 3 abstract keepers. Gap brick: 15+ yrs of safe-routing, none by vehicle type |
 | `raw/papers/tier1/tier1_journal2/TR-C-deepread.md` | TR Part C | **Deep read (2026-06-18):** Mansoor 2026 (★★★ class-specific route sets + mean-excess CVaR tail = per-type routing mechanism), Sohrabi & Lord 2022 (operational home; NB weather-stratified; 8%/23%; survival-prob route aggregation), Kavta 2025 (demand-side niche: riders trade time for safety), Chandra 2014 (user-conditioned routing precedent — parametric, crash-data-free; donates multi-objective Pareto/Yen routing machinery), Hu 2018 (★ Colocation Quotient = per-type spatial significance gate; the tool to generate spatial-divergence-by-type evidence on STATS19) |
+| `raw/papers/tier1/tier1_journal3/AAP-abstract-refs.md` | AAP | **Reading pass (2026-06-19), keywords 2/5 done:** 7 abstract keepers, 2 full-text promotions (both now deep-read). Pending: `truck/HGV crash risk` · `vehicle type crash heterogeneity` · `vulnerable road user crash` |
+| `raw/papers/tier1/tier1_journal3/AAP-deepread.md` | AAP | **Deep read (2026-06-19):** Pathivada 2025 (motorcycle segment SPF — per-type slice flips to **under-dispersion** → CMP/HTCMP not NB/ZITD; EB ranking; homogeneous segmentation) + Barabino 2021 (★★ **R=H·V·E** per-bus-route risk → section-sum → quartile ranking = closest per-type→route-risk→ranked-output precedent) |
 | *(new reading-pass records continue here)* | | |
 
 ---
@@ -82,4 +84,4 @@ mirroring the Phase 2 working style.
 
 ---
 
-*Last updated: 2026-06-18 | Phase 3 pages: 2 (PLAN + living positioning memo) + 3 carry-over deep-read records (T-ITS, ESWA, AAP)*
+*Last updated: 2026-06-19 | Phase 3 pages: 2 (PLAN + living positioning memo) + 3 carry-over deep-read records (T-ITS, ESWA, AAP) + Tier-1 sweep records (T-ITS, TR-C, AAP) with TR-C & AAP deep-read companions*

@@ -31,6 +31,65 @@ Parse with: `grep "^## \[" log.md | tail -10`
 - Notable: **Next — Tier 1 reading pass (T-ITS, TR-C, AAP, ESWA) on routing + vehicle-type
   keywords.** Mirror Phase 2's lightweight per-journal `*-abstract-refs.md` records.
 
+## [2026-06-19] ⏸ CHECKPOINT — end of day, read this first next session
+- **State: AAP (Tier 1, Journal 3) sweep STARTED — keywords 1–2 of 5 done; both full-text keepers deep-read.**
+- **What got done today:** (1) AAP keyword 1 `risk aware route planning` → 1 abstract keeper (Changsha
+  demand-side), confirmed AAP isn't a routing-system venue; (2) AAP keyword 2 `motorcycle crash risk segment`
+  → 5 abstract keepers + 2 full-text deep reads (Opus): **Pathivada 2025** (motorcycle segment SPF;
+  per-type slice → **under-dispersion** → CMP/HTCMP not NB/ZITD; EB ranking; homogeneous segmentation) and
+  **Barabino 2021** (★★ **R=H·V·E** per-bus-route risk → section-sum → quartile ranking = closest
+  per-type→route-risk→ranked-output precedent). New folder `tier1_journal3/` with `AAP-abstract-refs.md`
+  + `AAP-deepread.md`.
+- **Decisions moved:** count model is now a **per-type choice, not a default** (new Open Decision #3b:
+  ZITD vs CMP/HTCMP — measure dispersion in the probe); **EB** added as significance/screening gate
+  candidate #4; **homogeneous segmentation** = cheap HSM-aligned answer to segment-definition #2; exposure
+  confound reconfirmed (both papers use aggregate exposure). The **H·V·E decomposition** is now a concrete
+  thing to adopt for the route-risk scalar.
+- **Where each layer stands (unchanged headline):** routing home = STRONG; engine = solid (Gao) **+ now a
+  per-type count-family fork (CMP/HTCMP) when under-dispersed**; significance gate = 4 candidates (Wei, Wang,
+  Hu-CLQ, EB). **NICHE = still thin where it's load-bearing** — these confirm motorcycle *segment risk* is
+  buildable but give NO **spatial-divergence-by-type** (different segments risky for different types).
+- **Resume plan (next session):** (1) **AAP keywords 3–5** = top priority — `truck/HGV crash risk`,
+  `vehicle type crash heterogeneity`, `vulnerable road user crash` — hunting the spatial-divergence brick;
+  (2) light ESWA pass (Sarraf already deep-read); (3) then **STATS19 per-type density probe** (Open Decision
+  #6) — and now it must report **per-type dispersion + zero rate** (picks ZITD vs CMP), plus the CLQ
+  divergence analysis (generates the niche evidence + headline).
+- **Two outstanding decisions (carried):** time-optimization axis (contribution vs borrow); per-type exposure
+  (DfT AADF by vehicle type?).
+- Nothing half-written; abstract-refs, deep-read record, positioning-memo, index, log all consistent. Committed + pushed at EOD.
+
+## [2026-06-19] reading | AAP Tier-1 sweep started (kw 1–2) + 2 deep reads
+- Records: [[AAP-abstract-refs]] (sweep) + [[tier1_journal3/AAP-deepread]] (full reads), new `tier1_journal3/`.
+- **Keyword 1 `risk aware route planning`:** ~90 titles, 1 abstract keeper (Changsha ALPR — motorists
+  do trade efficiency for safety at night/non-livelihood → demand-side brick, complements Kavta). AAP
+  is not a routing-system venue (confirmed).
+- **Keyword 2 `motorcycle crash risk segment`:** 5 abstract keepers + **2 full-text → deep-read (Opus):**
+  - **Pathivada et al. 2025 — motorcycle segment SPF (Kentucky).** ★ Key finding: motorcycle-only
+    segment crashes were **UNDER-dispersed** (variance < mean) → NB/ZITD (built for over-dispersion)
+    inappropriate; needs **CMP/HTCMP**. First *real-data* signal that the per-type slice can **flip the
+    count regime** → directly feeds Open Decision #6. Also donates **Empirical Bayes** high-crash ranking
+    (gate/screening candidate #4, HSM-standard) + **homogeneous segmentation** (cut where road class/lanes/
+    speed/AADT changes → cheap answer to #2). Caveat: controlled zeros to ~20% (not STATS19's true rate);
+    aggregate-AADT exposure = per-type exposure confound again. Single-type, no divergence, no routing.
+  - **Barabino et al. 2021 — bus crash risk, real network.** ★★ **structural precedent**: per-vehicle-type
+    **R = H·V·E** (NB frequency × binary-logistic severity × passenger·km exposure), computed per
+    homogeneous section → **summed to route risk** → quartile-cut 4-level ranking. The closest existing
+    per-type → route-risk → ranked-output pipeline in the whole corpus (bus-only, fixed lines = *screening,
+    not routing*). Donates the **H·V·E decomposition + section-sum + binary-severity collapse** for rare
+    fatals. Bonus brick: third-party vehicle type shifts severity odds (heavy-veh 1.91×, 2/3-wheeler 2.16×
+    vs car) = another "type matters."
+- **Net moves:** (1) count model is now a **per-type decision, not a default** (ZITD vs CMP/HTCMP, measure
+  dispersion in the probe → added Open Decision #3b); (2) EB joins the significance-gate shortlist (#4 with
+  Wei/Wang/Hu-CLQ); (3) a complete per-type route-risk scalar (H·V·E) is now in hand to adopt; (4) exposure
+  confound reconfirmed (both papers use aggregate exposure).
+- **Niche still thin where it's load-bearing:** these confirm motorcycle *segment risk* is buildable, but
+  give **no spatial-divergence-by-type** (different segments risky for different types). That's keywords 3–5
+  + the CLQ-on-STATS19 probe. Gap test holds: no cross-type routing anywhere.
+- Bookkeeping: deep-read record, abstract-refs (kw1+kw2, full-text → deep-read), positioning-memo (niche +
+  gate tables, Open Decisions #2/#3/#3b/#6), index (+footer), log.
+- Notable: **Next — AAP keywords 3–5** (`truck/HGV crash risk`, `vehicle type crash heterogeneity`,
+  `vulnerable road user crash`), hunting the spatial-divergence brick; then light ESWA pass + STATS19 probe.
+
 ## [2026-06-18] ⏸ CHECKPOINT — end of day, read this first next session
 - **State: Tier 1 Journals 1 (T-ITS) + 2 (TR-C) fully swept; all keepers deep-read.** Big productive day.
 - **What got done today:** (1) deep-read all 6 carry-over PDFs → 3 per-journal records (T-ITS/ESWA/AAP);
