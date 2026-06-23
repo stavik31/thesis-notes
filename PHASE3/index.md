@@ -50,6 +50,22 @@ mirroring the Phase 2 working style.
 |------|------|-------------|
 | [[wiki/queries/2026-06-18-where-we-stand-and-remaining-gaps]] | 2026-06-18 | Post-deep-read standing + gap analysis; which gaps the reading plan covers vs. the per-type density risk that only a data probe can answer |
 
+## Build Plan
+
+System design and stage-by-stage implementation guides (output of 2026-06-23 system planning session).
+
+| Page | Description |
+|------|-------------|
+| [[wiki/build/system-overview]] | Full pipeline overview — two halves, 6 stages, data sources, AI architecture, key design decisions |
+| [[wiki/build/stage-1-data-prep]] | Clean and join STATS19 tables into a single crash-level table |
+| [[wiki/build/stage-2-segmentation]] | Segment OS Open Roads network; map-match crashes; attach AADF traffic counts |
+| [[wiki/build/stage-3-gat-risk-model]] | Train GAT with vehicle-type-conditioned attention; output risk score per (segment, type) |
+| [[wiki/build/stage-4-risk-surface-filtering]] | Threshold GAT output; CLQ post-hoc divergence maps |
+| [[wiki/build/stage-5-routing]] | Yen's k-shortest paths + MCDM ranking (AHP/PROMETHEE) per vehicle type |
+| [[wiki/build/stage-6-evaluation]] | Risk model precision@X%; routing counterfactual + Sarraf metrics; divergence test |
+
+---
+
 ## Concepts & Methods
 
 | Page | Description |
@@ -85,4 +101,4 @@ mirroring the Phase 2 working style.
 
 ---
 
-*Last updated: 2026-06-22 | **TIER 1 CLOSED** (T-ITS · TR-C · AAP · ESWA all swept). Reading phase essentially complete (~14 deep reads + ~25–30 abstract keepers). Niche spatial-divergence premise upgraded analogical→demonstrated (Lee 2018) and validated on STATS19 data. **Now: system-build planning underway** (6-stage pipeline; paused mid-Stage-3). Next deliverable: full positioning-memo revamp after the build design is settled.*
+*Last updated: 2026-06-23 | **SYSTEM PLAN COMPLETE.** Reading phase closed; 6-stage build plan fully designed (2026-06-23 session). GAT with vehicle-type-conditioned attention confirmed as AI core. Build files created for all 6 stages. Next: positioning-memo revamp, then start the build (Stage 1).*

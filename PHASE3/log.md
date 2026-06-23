@@ -6,6 +6,28 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-06-23] ⏸ CHECKPOINT — system plan complete, build files created. Read this first next session.
+- **State: 6-stage build plan fully designed. Reading phase closed. Ready to start building.**
+- **What got done today:** full system planning session — walked all 6 stages, resolved architecture, created build files.
+- **Key architectural decisions locked:**
+  - **AI core = GAT (Graph Attention Network) with vehicle-type-conditioned attention** — single unified model across all types, type embeddings condition the attention weights per message-passing step. Justified by Gao 2024 (GNN on STATS19) + Zhu 2025. Separate models per type rejected (loses cross-type relationships, hurts sparse types).
+  - **Stage 4 = threshold on GAT output** (not a separate statistical significance test). GAT already does spatial smoothing through message passing — the gate is implicit. CLQ demoted to post-hoc analysis tool (generates spatial divergence maps for results section, not a production pipeline component).
+  - **Stage 5 = Yen's k-shortest paths + MCDM ranking** (AHP weights + PROMETHEE). Vehicle-type-conditioned edge weights produce different ranked routes per type for the same O-D pair. Mean-excess/CVaR (Mansoor) deferred — revisit with real risk surface.
+  - **LLM explanation layer = out** (supervisor direction, confirmed). Risk breakdown per route is the explainability — no language generation.
+  - **RL = not used** (poor fit for offline precomputed graph routing; no corpus justification).
+- **Build files created** (all in `wiki/build/`): system-overview + stages 1–6.
+- **Two queued tasks (in order):** (1) positioning-memo revamp (now that build design is settled); (2) start the build at Stage 1.
+- **Open data question (still unresolved):** DfT AADF per-type availability at segment level — first thing to check in Stage 2.
+- Notable: system plan covers the full thesis build. The GAT + type-conditioned attention is the distinctive AI contribution on top of the vehicle-type data-niche direction.
+
+## [2026-06-23] build | System plan completed — 6-stage pipeline designed, build files created
+- Pages created: [[wiki/build/system-overview]], [[wiki/build/stage-1-data-prep]], [[wiki/build/stage-2-segmentation]], [[wiki/build/stage-3-gat-risk-model]], [[wiki/build/stage-4-risk-surface-filtering]], [[wiki/build/stage-5-routing]], [[wiki/build/stage-6-evaluation]].
+- Index updated with Build Plan section.
+- **Pipeline:** data prep → segmentation → GAT risk model → risk surface filtering → Yen's k-shortest + MCDM routing → evaluation (Gao + Sarraf metrics + counterfactual).
+- **AI components:** GAT with vehicle-type-conditioned attention (Stage 3); threshold on GAT output (Stage 4); CLQ as post-hoc analysis only.
+- **Evaluation:** precision@X% (Gao), Spearman/AO/DCG (Sarraf), counterfactual divergence test (original).
+- Notable: system plan is now the primary reference for the build phase. Positioning-memo revamp is next before starting Stage 1.
+
 ## [2026-06-17] structure | Phase 3 created — pivot to risk-aware routing + data niche
 - Pages: [[PHASE3/PLAN]], [[PHASE3/positioning-memo]] (living), [[PHASE3/index]], this log.
 - **Trigger: 2026-06-17 supervisor meeting** (after presenting the Phase 2 CRM/LLM memo).
