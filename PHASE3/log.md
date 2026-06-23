@@ -31,6 +31,79 @@ Parse with: `grep "^## \[" log.md | tail -10`
 - Notable: **Next — Tier 1 reading pass (T-ITS, TR-C, AAP, ESWA) on routing + vehicle-type
   keywords.** Mirror Phase 2's lightweight per-journal `*-abstract-refs.md` records.
 
+## [2026-06-22] ⏸ CHECKPOINT — TIER 1 CLOSED, reading phase done, system planning underway. Read this first next session.
+- **State: all of Tier 1 swept (T-ITS · TR-C · AAP · ESWA). Reading phase essentially complete. Pivoted to designing the build.**
+- **What got done today:** (1) finished the AAP sweep — keywords 3–5 (noise; `heterogeneity` = *statistical* het.,
+  a semantic mis-hit) + the spatial-divergence keyword `motorcycle crash hotspot` → **deep-read Lee et al. 2018
+  (AAP), THE spatial-divergence brick** (vehicle-type hot zones "substantially different across types," statewide
+  Florida; donates EPP per-type screening gate). Niche premise upgraded *analogical → demonstrated*. (2) ESWA light
+  pass: 2 keywords, both return only Sarraf (already deep-read) → **Tier 1 CLOSED**, recorded in new
+  [[tier1_journal4/ESWA-abstract-refs]]. (3) **Direction validated on real data** — an informal STATS19 per-type
+  probe (deliberately NOT written up as a wiki artifact, per user's call) confirmed the divergence **survives at
+  segment level, beyond chance, volume-controlled**: motorcycle crashes 72% urban vs HGV 61% rural; moto~HGV per-cell
+  count correlation 0.24 (vs 0.41 random) → types actively spatially segregated; HGV is the sparse one (≈80–91% of
+  cells zero-HGV → the real engineering risk). So: gap is REAL and worth building; HGV sparsity is the thing to engineer around, not an existential threat.
+- **Corpus standing:** ~14 deep reads + ~25–30 abstract keepers ≈ 40 citable papers (the user worried 8 was too few
+  — clarified: deep-reads ≠ citations; the abstract tier is the breadth/citation layer and counts). Reading is
+  *sufficient to start the build*; remaining reads happen just-in-time during the build.
+- **SYSTEM PLANNING — where the teaching conversation paused (resume here):** Established the mental model and the map:
+  - **Two halves:** OFFLINE = build per-vehicle-type risk maps (the "engine": Gao/Jiang/Pathivada/Barabino + count
+    models + gates); ONLINE = answer a route query fast (the "router": Sarraf/Mansoor). Precompute the expensive
+    statistics offline; leave only cheap path arithmetic for live.
+  - **6-stage pipeline:** (1) data prep [≈done in probe — join tables, tag crash by vehicle involvement, severity-weight,
+    keep collision_year for temporal holdout]; (2) **segmentation** [RECOMMENDED: **homogeneous road segments**
+    (Pathivada) — real road so the router is happy, pooled so less sparse, HSM-standard/borrowed; with **EB shrinkage
+    toward a coarse unit** to rescue sparse HGV. Needs OS Open Roads + map-matching crashes onto links. Build order
+    suggested: v1 grid → v2 homogeneous segments]; (3) per-type risk modeling; (4) significance gate; (5) routing;
+    (6) evaluation.
+  - **PAUSED mid-bridge into Stage 3.** Pending question posed to the user: *why can't you just use the raw
+    severity-weighted crash count as a segment's risk score?* **Intended answer (for resume):** two problems — (a) the
+    **count/noise** problem they saw in the probe (sparse types → a raw count of 1–2 is mostly randomness, and
+    dispersion regime varies by type: NB/ZITD for over-dispersed car/moto vs CMP/HTCMP for under-dispersed HGV — raw
+    count ignores all this); (b) the **fairness-between-roads / exposure** problem — a road with 7 moto crashes and
+    10k motorcycles/day is *safer* than one with 3 crashes and 100/day; raw count confounds risk with volume →
+    must normalise by per-type exposure (DfT AADF by vehicle type — still an open data-availability check).
+- **Two queued tasks, in order:** (1) **finish the system plan** (Stages 3→6), then (2) **full positioning-memo
+  revamp** grounding the now-validated direction + the finalized technical/build design (deferred deliberately so the
+  memo can bake in real build decisions, not literature guesses). Memo NOT touched today, per user.
+- Bookkeeping today: AAP-abstract-refs (kw 3–6 + Lee→deep-read), AAP-deepread §3 + net-effect, positioning-memo
+  (niche premise/reframe/evidence-map/gate table — Lee + EPP), index, ESWA-abstract-refs (new), this log. Not yet
+  committed to git (EOD commit pending).
+
+## [2026-06-22] reading | AAP sweep COMPLETE — the spatial-divergence brick found (Lee 2018)
+- Records: [[AAP-abstract-refs]] (kw 3–6) + [[tier1_journal3/AAP-deepread]] (§3 Lee 2018).
+- **Keywords 3–5 (`truck/HGV crash risk`, `vehicle type crash heterogeneity`, `vulnerable road user crash`):**
+  noise. Critical lesson — **keyword 4 was semantically wrong**: "heterogeneity" in AAP = *statistical*
+  unobserved heterogeneity (random parameters/latent class), NOT inter-vehicle-class differences. ~240
+  titles across the three, only abstract-level keepers: Network-wide screening framework (P×S×E, method-borrow),
+  French fatality-by-user-type (MTW 20–32× car, niche-premise strong), pro-vs-regular two-wheeler France/UK
+  (demand-side), cyclist Poisson-Tweedie Lisbon (count-model brick — cyclists OVER-dispersed vs motorcycles
+  UNDER-dispersed → confirms count family varies by type). 0 full-text from these three.
+- **Keyword 6 `motorcycle crash hotspot` (SPATIAL-DIVERGENCE cluster — the one that was mis-prioritised earlier):**
+  3 abstract keepers + **1 full-text → DEEP-READ (Opus): Lee, Yasmin, Eluru, Abdel-Aty & Cai 2018 (AAP 111:12–22).**
+  - ★★★ **THE BRICK.** Mixed MNL fractional split on crash *proportions* by vehicle type, 8,129 TAZs statewide
+    Florida, 8 types. **"the spatial pattern of hot zones is substantially different across vehicle types"** —
+    HGV→rural, bicycle→metro, pedestrian→urban, motorcycle→rural. First real-data evidence in the whole corpus
+    that vehicle-type hot zones diverge *as places*. **Upgrades the niche premise from analogical → demonstrated.**
+  - Donates **EPP (Excess Predicted Proportion)** = observed − predicted proportion per type, HSM-analogous →
+    significance/screening gate candidate #5 (inherently per-type, divergence-revealing; needs a fitted model,
+    so complements model-free CLQ).
+  - Limits keeping work for us: TAZ macro not segment; proportion not exposure-normalised risk; no routing. →
+    *segment-resolution + GB/STATS19 + routing exploitation* is still the open space.
+  - Also abstract-only: CLQ-on-crash-severity (College Station — validates CLQ on crash categorical data, Hu 2018
+    stays primary ref); "A review of spatial approaches in road safety" (landscape reference).
+- **Net moves:** (1) niche premise reframe — no longer "thin/manufacture it ourselves," now "replicate a
+  demonstrated effect at finer resolution + exploit for routing" (much safer); (2) EPP added to gate shortlist
+  (Wei/Wang/Hu-CLQ/EB/**EPP**); (3) count-family-varies-by-type reconfirmed (cyclist over- vs motorcycle
+  under-dispersion).
+- **Gap test holds at its strongest:** across T-ITS + TR-C + AAP, the spatial divergence is now *proven* (Lee)
+  but **nobody routes on it**, and nobody does it at segment level — the segment + routing combo is the thesis.
+- Bookkeeping: AAP-abstract-refs (kw 3–6 + Lee → deep-read), AAP-deepread §3 + net-effect, positioning-memo
+  (niche premise paragraph, reframe note, evidence-map row, gate table + Open Decision #3), index (+footer), log.
+- Notable: **AAP Tier-1 journal DONE.** Next — light ESWA pass (Sarraf already deep-read), then the **STATS19
+  per-type density probe** (Open Decision #6): now a *segment-level confirmation* of Lee's TAZ-level divergence
+  + dispersion/zero-rate measurement (picks ZITD vs CMP) + CLQ/EPP per-type screening.
+
 ## [2026-06-19] ⏸ CHECKPOINT — end of day, read this first next session
 - **State: AAP (Tier 1, Journal 3) sweep STARTED — keywords 1–2 of 5 done; both full-text keepers deep-read.**
 - **What got done today:** (1) AAP keyword 1 `risk aware route planning` → 1 abstract keeper (Changsha

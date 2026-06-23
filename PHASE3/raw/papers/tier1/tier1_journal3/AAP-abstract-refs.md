@@ -6,12 +6,16 @@ record (titles → abstracts → full-text), mirroring the Phase 2 style.
 **Keywords swept so far:** `risk aware route planning` (generic, 2026-06-19) ·
 `motorcycle crash risk segment` (2026-06-19).
 
-**Keywords pending:** `truck/HGV crash risk` · `vehicle type crash heterogeneity` ·
-`vulnerable road user crash`.
+**Keywords swept (7 done):** `risk aware route planning` (2026-06-19) ·
+`motorcycle crash risk segment` (2026-06-19) · `truck/HGV crash risk` (2026-06-22) ·
+`vehicle type crash heterogeneity` (2026-06-22) · `vulnerable road user crash` (2026-06-22) ·
+`motorcycle crash hotspot` (2026-06-22) · *(spatial divergence keywords 7–9 pending)*.
 
-**Pass result (keyword 2/5): 7 abstract keepers, 2 full-text promotions, 1 skip (severity-only), ~90 title-level skips.** AAP's generic routing keyword returns
-mostly noise (AV/HMI, human factors, pedestrian/cycling behaviour). Vehicle-type keywords are where
-AAP is expected to deliver; this keyword confirms that routing-system work does not home here.
+**Pass result (all 5 keywords done): 8 abstract keepers, 2 full-text promotions (deep-read), 0 spatial-divergence papers found.**
+Keywords 3–5 returned noise (severity models, behavioral studies, VRU injury papers) with a semantic
+mismatch on keyword 4 (`heterogeneity` = statistical unobserved heterogeneity in AAP, not inter-class
+differences). The spatial-divergence-by-type evidence base does not exist in AAP under these keywords
+— the gap is real, not a search failure. Gap-test brick confirmed.
 
 ---
 
@@ -116,6 +120,128 @@ AAP is expected to deliver; this keyword confirms that routing-system work does 
 - *A spatiotemporal analysis of motorcyclist injury severity — Pennsylvania 20 years* — severity
   focus (not crash frequency/count per segment). Spatial non-stationarity is interesting but the
   thesis builds a crash count risk surface, not a severity model. Skip.
+
+---
+
+---
+
+## Keyword 6 — `motorcycle crash hotspot` (2026-06-22) [SPATIAL DIVERGENCE CLUSTER]
+
+**Result: 3 abstract keepers, 1 full-text → DEEP-READ, ~50 title-level skips.** Mostly AV crashes, severity
+models, pedestrian/cyclist studies. Two substantive finds: one CLQ method validation on crash data,
+one vehicle-type spatial-divergence paper (the strongest niche-premise find of the entire pass, now deep-read).
+
+### Promoted to full-text → **DEEP-READ 2026-06-22** (see [[AAP-deepread]] in this folder)
+
+- **Analysis of crash proportion by vehicle type at traffic analysis zone level: A mixed fractional
+  split multinomial logit modeling approach with spatial effects** (Lee, Yasmin, Eluru, Abdel-Aty &
+  Cai 2018, AAP 111:12–22) — ✅ **deep-read.** Models crash *proportion* by vehicle type at TAZ level
+  (8,129 zones, statewide Florida, 8 vehicle types) via mixed MNL fractional split. Proposes **EPP
+  (Excess Predicted Proportion)** = observed − predicted proportion per type, HSM-analogous screening.
+  **Key finding (the brick): "the spatial pattern of hot zones is substantially different across the
+  various vehicle type crashes"** — HGV hot zones (rural) ≠ bicycle (metro) ≠ pedestrian (urban) ≠
+  motorcycle (rural). **Tag: `niche-premise (STRONG — the spatial-divergence brick)` / `method-borrow
+  (EPP gate)`.** Upgrades the niche premise from *analogical* to *demonstrated*: vehicle-type hot zones
+  DO diverge spatially with real data. Limits: TAZ macro-level (not segment), proportion not
+  exposure-normalised risk, no routing — the segment-resolution + routing combination stays open.*
+
+- **Applying the colocation quotient index to crash severity analyses** — *(motorcycle crash hotspot; abstract read 2026-06-22)*
+  *Applies CLQ to crash severity categories (fatal, major injury, minor injury, non-injury) in College
+  Station, Texas. Finds crashes cluster by severity level; fatal crashes show strongest spatial
+  clustering; CLQ matrix approximately symmetrical for non-injury vs injury grouping. **Tag:
+  `method-borrow (CLQ)`.** Validates CLQ on crash categorical data — one step from severity categories
+  to vehicle-type categories (our planned application). Establishes CLQ as a legitimate crash analysis
+  tool in AAP. Hu 2018 (TR-C) remains the primary CLQ reference; this paper is corroborating method
+  precedent. Not full-text.*
+
+- **A review of spatial approaches in road safety** — *(motorcycle crash hotspot; abstract read 2026-06-22)*
+  *Systematic review of spatial approaches in road safety: areal unit levels, modelling approaches
+  (econometric, Bayesian, ML), MAUP, boundary problems, spatial proximity structures, VRU spatial
+  analysis. Summarises study design characteristics in reference tables. **Tag: `method-adjacent
+  (spatial methods review)`.** Useful landscape reference for spatial methods — covers MAUP and
+  proximity structures relevant to our CLQ/segmentation decisions. Not full-text; covers methods
+  already represented by individual papers in the corpus.*
+
+### Skipped (representative)
+- AV crash studies, severity models, pedestrian/cyclist papers — all seen in prior keywords.
+
+---
+
+## Keyword 5 — `vulnerable road user crash` (2026-06-22)
+
+**Result: 4 abstract keepers, 0 full-text, ~90 title-level skips.** Dominated by pedestrian/cyclist
+severity models, AV crash studies, and behavioral research. VRU in AAP = pedestrians/cyclists; motor
+vehicle class spatial risk is absent.
+
+### Keepers (abstract-only)
+
+- **Network-wide road crash risk screening: A new framework** — *(vulnerable road user crash; abstract read 2026-06-22)*
+  *Integrates probability × severity × exposure per road segment → ranks segments → 5-level risk
+  classification. Applied to non-urban road network of Brescia province, Italy (5 years crash data).
+  Framework designed to pinpoint critical segments proactively before crashes occur. No vehicle-type
+  conditioning, no routing. **Tag: `method-borrow`.** Structural parallel to Barabino's H·V·E and to
+  the thesis risk layer (our version is per vehicle type). One citation as method precedent. Not full-text.*
+
+- **Road crash fatality rates in France: A comparison of road user types, taking account of travel practices** — *(vulnerable road user crash; abstract read 2026-06-22)*
+  *Exposure-based fatality rates by road user type using French national police crash data + national
+  travel survey (2007–2008). Key finding: motorized two-wheeler (MTW) users face **20–32× the fatality
+  rate of car occupants** when exposure is controlled; cyclists ~1.5× higher. Rates differ by age and
+  sex. **Tag: `niche-premise (strong)`.** The 20–32× figure is a powerful one-sentence thesis
+  introduction citation: crash risk is not uniform across vehicle types even per unit of travel. French
+  data; principle transfers universally. Not full-text.*
+
+- **Accident characteristics of professional versus regular two-wheeler riders in France and the UK: insights from national crash databases** — *(vulnerable road user crash; abstract read 2026-06-22)*
+  *Compares crash characteristics of professional (delivery) vs regular TW riders in France and UK,
+  2019–2023. Professional riders: younger, predominantly male, lighter vehicles, urban/lower-speed
+  environments, crash timing peaks around delivery hours, more slight injuries (France: 74.7% vs 54.5%;
+  UK: 82.3% vs 69.1%). Logistic regression. Uses UK national crash database (STATS19-adjacent). No
+  spatial analysis, no segment-level crash frequency. **Tag: `demand-side` / `niche-premise (weak)`.**
+  UK context useful; confirms within-TW rider-type differences in crash profile. Complements Kavta 2025
+  on delivery-rider demand side. Not full-text.*
+
+- **Estimate traffic cyclist crashes using Poisson-Tweedie models** — *(vulnerable road user crash; abstract read 2026-06-22)*
+  *Cyclist crash frequency in Lisbon (2015–2019) using Poisson-Tweedie models for overdispersed count
+  data. 250×250m grid cells; covariates: road length, intersection types, cycling infrastructure.
+  Spatial autocorrelation incorporated. Intersection density = strongest predictor. **Tag:
+  `method-borrow (count model)`.** Directly relevant to Open Decision #3b: cyclists are *overdispersed*
+  (Poisson-Tweedie) while motorcycles are *under-dispersed* (Pathivada → CMP/HTCMP). Two different
+  per-type count regimes from two papers = the per-type probe must check dispersion before choosing
+  the model family. Not full-text.*
+
+### Skipped (representative)
+- Severity models for pedestrians, cyclists, e-scooters, e-bikes — off-domain (severity not frequency, not motor vehicle class).
+- AV crash studies — off-domain.
+- Behavioral/distraction studies — off-domain.
+
+---
+
+## Keyword 4 — `vehicle type crash heterogeneity` (2026-06-22)
+
+**Result: 0 keepers, ~100 title-level skips. Semantic mismatch.** In AAP, "heterogeneity" = statistical
+unobserved heterogeneity (random parameters, latent class, temporal instability in model coefficients).
+Not inter-vehicle-class differences in crash patterns. The entire 100-paper list is severity models with
+heterogeneous error structures. This keyword hit the wrong semantic field — a better keyword would be
+`vehicle type crash frequency` or `vehicle class crash spatial`.
+
+**Marginal method picks (not logged as keepers):**
+- *Head-on heavy vehicle crashes in Queensland: random parameters Lindley approach for excessive zeros* — HGV-specific with zero-inflation, but severity not frequency. Skip.
+- *Segment length optimization for crash frequency modelling: Evaluating power spectral segment length* — method-adjacent to Open Decision #2 but abstract-level insufficient to assess value. Skip.
+
+**Gap-test note:** No paper in 100 results compared crash *patterns* or *spatial distribution* across vehicle types. Confirms the inter-class spatial divergence evidence does not exist in this venue under any plausible keyword.
+
+---
+
+## Keyword 3 — `truck/HGV crash risk` (2026-06-22)
+
+**Result: 0 keepers, ~40 title-level skips.** Returned severity models, behavioral studies (driver
+fatigue, HGV–VRU encounters), and real-time interaction metrics. No segment-level HGV crash frequency
+or spatial distribution papers. Confirms HGV *spatial* risk evidence is absent from AAP under this
+keyword — the evidence simply does not exist, not a search failure.
+
+**Skipped (near-misses):**
+- *Analysis of large truck crash severity using heteroskedastic ordered probit models* — severity, not frequency. Skip.
+- *Risk assessment in ramps for heavy vehicles — A French study* — HGV risk at ramp features (specific location); severity focus, no routing. Skip.
+- *The importance of flow composition in real-time crash prediction* — already in corpus (keyword 2).
 
 ---
 

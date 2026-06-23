@@ -100,14 +100,20 @@ The home is routing, not crash-risk-modeling-as-an-end. CRM (Gao 2024 etc.) is t
 
 ### 2. What niche? — Vehicle-type-conditioned segment crash risk
 The novelty the supervisor asked for ("find a niche in the data nobody explored"):
-- **Premise — WEAKER than carry-over assumed (deep-read correction, 2026-06-18).** Zhu 2025 is
-  "vehicle-**group**," not "vehicle-**type**": a VG is a *dynamic cluster of interacting vehicles*
-  (trajectory/iTTC, real-time, microscopic), with vehicle type as just 1 of 8 node features. It
-  does **not** establish that different vehicle *classes* face different *segment* risk, and it
-  doesn't route. So Zhu is a methodological cousin (graph + GNNExplainer XAI) and Abdel-Aty field
-  anchor, **not** the niche's core premise. → **The vehicle-type-heterogeneity evidence base is
-  still THIN and is the live priority** (need real AAP motorcycle/HGV segment-risk papers). See
-  [[T-ITS-deepread]].
+- **Premise — now DEMONSTRATED, not just analogical (upgrade 2026-06-22, Lee et al. 2018).** The
+  load-bearing claim — *different vehicle types are risky in different places* — now has direct
+  real-data support: Lee et al. 2018 (AAP) screened statewide Florida crashes by 8 vehicle types and
+  found **"the spatial pattern of hot zones is substantially different across vehicle types"** (HGV→rural,
+  bicycle→metro, pedestrian→urban, motorcycle→rural). This is the spatial-divergence brick the niche
+  was missing. **Caveats that keep work for the thesis:** it's at TAZ (macro) level not segment, uses
+  crash *proportion* not exposure-normalised risk, and doesn't route — so the *segment-resolution + GB
+  + routing-exploitation* combination is still ours to build/prove. The premise no longer has to be
+  assumed; the open question is whether it survives at segment resolution on STATS19.
+- **Earlier premise sources, in context:** Zhu 2025 is "vehicle-**group**" not "vehicle-**type**" (dynamic
+  interaction clusters, real-time/microscopic; type = 1 of 8 node features) → method-cousin + Abdel-Aty
+  anchor, **not** premise. Pathivada 2025 + Barabino 2021 confirm a per-type risk surface is *buildable*
+  but are single-type (no divergence). Lee 2018 is the one that supplies the cross-type spatial claim.
+  See [[T-ITS-deepread]], [[tier1_journal3/AAP-deepread]].
 - **Unoccupied for routing:** no paper in the corpus routes by vehicle type. Sarraf's router even
   normalises by AADT but has **no vehicle-type term** (deep-read confirmed — [[ESWA-deepread]]).
 - **Combinable:** vehicle type as the primary axis; weather/time as secondary axes added
@@ -165,7 +171,8 @@ explanation/faithfulness/LLM half is **future-work**, not core.
 3. **Significance test** — candidates now: chi-square overrepresentation (Wang lineage) vs **Empirical
    Bayes (Pathivada 2025 — HSM-standard, RTM-corrected high-crash ranking)** vs Bayesian network vs
    **Colocation Quotient (Hu 2018 — per-type spatial overrepresentation, Monte-Carlo significance,
-   network-distance, MAUP-aware)** vs case-crossover matched control (Wei).
+   network-distance, MAUP-aware)** vs case-crossover matched control (Wei) vs **EPP (Lee 2018 —
+   observed−predicted proportion per type, HSM-analogous, model-based)**.
    Baseline = network-wide vs road-class-specific; min-crash threshold per cell. (CLQ is the most
    *spatial* and most directly per-type — strong contender, ties to Phase-1 spatial assets.)
 3b. **Per-type count family (new, Pathivada 2025).** Don't assume Gao's ZITD (over-dispersion +
@@ -216,16 +223,20 @@ explanation/faithfulness/LLM half is **future-work**, not core.
 |---|---|---|
 | Zhu et al. 2025 (T-ITS) | ⚠ vehicle-**group** (not type); method-cousin + Abdel-Aty anchor, **weak premise** | **deep-read full text (2026-06-18)** — [[T-ITS-deepread]] |
 | **Hu, Zhang, Shelton 2018 (TR-C)** | **method to GENERATE the spatial-divergence-by-type evidence**: Colocation Quotient (GCLQ+LCLQ) = per-category spatial significance test. (Premise only analogical — combines ped+cyclist, not motor-vehicle classes.) Gap is thin partly because colocation-in-transport-safety is itself new (2018) | **deep-read full text (2026-06-18)** — [[TR-C-deepread]] |
+| **Lee, Yasmin, Eluru, Abdel-Aty & Cai 2018 (AAP)** | ★★★ **THE SPATIAL-DIVERGENCE BRICK** — first real-data evidence that vehicle-type crash hot zones diverge as *places*: "spatial pattern of hot zones is substantially different across vehicle types" (statewide Florida, 8 types; HGV→rural, bicycle→metro, pedestrian→urban). Mixed MNL fractional split on crash *proportions* by TAZ. Donates **EPP** (observed−predicted proportion = per-type HSM screening gate). Macro/TAZ not segment; proportion not exposure-normalised; no routing | **deep-read (2026-06-22)** — [[tier1_journal3/AAP-deepread]] |
 | **Pathivada et al. 2025 (AAP)** | ★ **motorcycle-specific segment SPF** (Kentucky rural multilane). **Per-type slice flips the count regime → UNDER-dispersion** (NB/ZITD inappropriate; needs CMP/HTCMP). Donates CMP family + EB high-crash ranking + homogeneous segmentation. Aggregate-AADT exposure; single-type (no divergence); no routing | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
 | **Barabino et al. 2021 (AAP)** | ★★ **structural precedent**: per-vehicle-type (bus) **R = H·V·E** (freq × severity × exposure) per section → summed → route risk → quartile 4-level ranking. Closest existing per-type→route-risk→ranked-output pipeline (bus-only, fixed lines = screening, not routing). Donates risk decomposition + section-sum + binary-severity collapse for rare fatals | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
 | Freeway-segment LCA/LPA (AAP) | heterogeneity by geometry | abstract only |
-| *(still thin: motorcycle/HGV **spatial-divergence** — different segments risky for different types — not yet found; AAP keywords 3–5 pending)* | | this pass |
+| *(spatial-divergence at SEGMENT resolution on GB/STATS19 still ours to produce — Lee proves it at TAZ/Florida; the segment + routing combination is the open space)* | | this pass |
 
-> **Reframe (2026-06-18):** the spatial-divergence-by-type premise being thin in the literature is
-> *not* evidence it's false — the spatial tool (CLQ) is recent and nobody applied it per-vehicle-class.
-> **The thesis can manufacture the premise itself** by running Hu's CLQ on STATS19 per vehicle type.
-> This makes the per-type density probe (Open Decision #6) even more central — it's both the
-> feasibility check *and* the first step of producing the niche evidence.
+> **Reframe (2026-06-18, UPDATED 2026-06-22):** the spatial-divergence-by-type premise is no longer
+> thin — **Lee et al. 2018 demonstrates it directly** (statewide Florida, 8 vehicle types, hot zones
+> "substantially different" across types). So the premise has external support; the thesis is no longer
+> *manufacturing it from nothing*, it's **replicating a demonstrated effect at finer (segment) resolution
+> on a new jurisdiction (GB/STATS19) and then exploiting it for routing** — a much safer position. The
+> per-type density probe (Open Decision #6) stays central as the *segment-level* feasibility + evidence
+> step; running Hu's CLQ per vehicle type on STATS19 is now a *confirmation/refinement* of a known effect
+> rather than a gamble on whether it exists at all.
 
 ### Risk engine + significance gate (inherited, solid)
 | Paper | Role | Status |
@@ -235,6 +246,7 @@ explanation/faithfulness/LLM half is **future-work**, not core.
 | Wang 2025 (AAP) | gate ancestor #2: χ²-CI Bayesian network (Bonferroni; BDs for sparse cells) | **deep-read full text (2026-06-18)** — [[AAP-deepread]] |
 | **Hu 2018 (TR-C)** | gate candidate #3: **Colocation Quotient** (per-type spatial overrepresentation, Monte-Carlo significance, network-distance, MAUP-aware) — ties to Phase-1 spatial/Cramér's-V assets | **deep-read (2026-06-18)** — [[TR-C-deepread]] |
 | **Pathivada 2025 (AAP)** | gate/screening candidate #4: **Empirical Bayes** high-crash-location ranking (HSM-standard, RTM-corrected via SPF dispersion) + **CMP/HTCMP** as the per-type count engine when a slice is under-dispersed (≠ Gao's ZITD) | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
+| **Lee 2018 (AAP)** | gate/screening candidate #5: **EPP (Excess Predicted Proportion)** = observed − predicted *proportion* per vehicle type, HSM-analogous. **Inherently per-type and divergence-revealing** (most directly fits the niche after CLQ); needs a fitted proportion model (complements model-free CLQ) | **deep-read (2026-06-22)** — [[tier1_journal3/AAP-deepread]] |
 
 ---
 

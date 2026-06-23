@@ -123,7 +123,84 @@ quartile risk scale**.
 
 ---
 
-## Net effect on the thesis (both papers)
+## 3. Lee, Yasmin, Eluru, Abdel-Aty & Cai 2018 — *Analysis of crash proportion by vehicle type at traffic analysis zone level: A mixed fractional split multinomial logit modeling approach with spatial effects* (AAP 111:12–22)
+
+**Role: `niche-premise (STRONG — the spatial-divergence brick)` + `method-borrow (EPP screening by vehicle type)`.**
+**Read: 2026-06-22 (Opus). Full text. Promoted from the `motorcycle crash hotspot` spatial-divergence keyword.**
+
+### Why this one matters more than the other two
+Pathivada and Barabino confirm a per-type *risk surface is buildable* but are both **single-type** — neither
+shows that *different vehicle types are risky in different places*. That cross-type spatial-divergence claim is
+the **load-bearing premise** of the whole thesis (if motorcycle hotspots = HGV hotspots as places, type-aware
+routing produces identical routes → null result). **This is the first paper in the entire Phase-2/Phase-3 corpus
+that states that claim with real data.**
+
+### What they did
+Modeled the **proportion of crashes by vehicle type** (not frequency) across **8,129 Traffic Analysis Zones**
+covering the entire state of **Florida** (FDOT CARS crash data, 2010–2012), across **8 vehicle types**: passenger
+car, van, light truck, medium & heavy truck, bus, motorcycle, bicycle, pedestrian. Method = **mixed multinomial
+logit fractional split model** (dependent variable = a vector of proportions per TAZ summing to 1; each type has a
+propensity equation; compensatory — a variable that raises one type's share lowers others'). The mixing collapsed
+(no significant unobserved heterogeneity) → effectively an MNL fractional split. Explanatory vars: socio-demographic,
+land-use, roadway/traffic, commuting.
+
+### The finding that is the brick
+After fitting, they ran a **statewide screening by vehicle type** and mapped the hot zones for each type (Fig. 2).
+The conclusion, in their words:
+
+> *"the spatial pattern of hot zones is **substantially different** across the various vehicle type crashes."*
+> *"the spatial pattern of hot zones varies considerably across the various vehicle types."*
+
+And the concrete per-type geography (their Section 5):
+- **Light truck** hot zones → rural areas.
+- **Medium & heavy truck** → concentrated in central & south **rural** areas.
+- **Bus** → **urban/suburban**.
+- **Motorcycle** → typically **rural** areas.
+- **Bicycle** → large **metropolitan** areas (rural relatively safe).
+- **Pedestrian** → **urban/suburban** (residential).
+
+→ HGV-risky zones and bicycle/pedestrian-risky zones are **different places**. That is exactly the
+"different segments are risky for different types" divergence the niche needs, demonstrated empirically.
+
+### The method brick — EPP (Excess Predicted Proportion)
+Their screening measure, **analogous to the HSM's Excess Predicted Average Crash Frequency** but for proportions:
+**EPP = observed proportion − predicted proportion** of a given vehicle type in a zone. Positive EPP = the zone has
+*more of that vehicle type's crashes than the model predicts* → a hot zone **for that type**. Rank all zones by EPP
+per type, classify into Hot / Not (they used a percentile cut). This is a **per-vehicle-type significance/screening
+gate** that is HSM-aligned — joins EB (Pathivada), CLQ (Hu), case-crossover (Wei), χ²-BN (Wang) on the gate
+shortlist. Crucially EPP is *inherently per-type and divergence-revealing* — it directly produces the
+"which zones are over-represented for type m" map the thesis wants.
+
+### Borrowable
+- **The divergence premise itself** — citable as: *vehicle-type crash hot zones are spatially distinct
+  (Lee et al. 2018)*. This is the one external citation that supports the niche before we even run our own probe.
+- **EPP screening** — adopt/adapt as the per-type over-representation gate (observed − predicted proportion), or as
+  a cross-check on CLQ. Note it needs a fitted proportion model; CLQ is model-free, so they're complementary.
+- **The 8-type taxonomy + proportion framing** — a precedent for treating vehicle type as a categorical partition
+  of crashes at a spatial unit.
+
+### Limitations / where it stops (and why the thesis still has wide-open space)
+- **Macro-level (TAZ), not segment/route.** Zones are large planning units, not road segments — it screens *areas*,
+  not the *links* a router traverses. The thesis must reproduce the divergence at **segment** resolution (finer →
+  sparser → the feasibility risk of Open Decision #6 bites harder). Their own limitation note: proportions can
+  mis-identify zones with very few crashes → they suggest **coupling a count model (total crashes) with the
+  proportion model**. That coupling is essentially what the thesis does (count engine + per-type screening).
+- **Proportion, not risk; no exposure-normalised per-type rate.** A high motorcycle *proportion* in rural Florida
+  partly reflects where motorcycles *are*, not just where they're dangerous — the per-type exposure confound again.
+- **No routing.** It's screening/planning support, not path-finding. Engine-side, like Jiang/Gao/Pathivada.
+- **Compensatory structure** — one type's share up forces others' down; a modelling artifact to keep in mind, and
+  a reason CLQ (which doesn't impose closure) is an attractive parallel tool.
+
+### Gap-test contribution — the niche is no longer premise-less
+This **upgrades the niche from `analogical premise` to `demonstrated premise`**: there now exists real-data evidence
+(statewide, 8 vehicle types) that vehicle-type crash hot zones diverge spatially. The thesis's job shifts from
+*"does this divergence exist?"* (Lee says yes at TAZ level) to *"does it hold at **segment** level on **STATS19/GB**,
+and can a router **exploit** it?"* — both still open, both ours. Lee gives the premise external support; the
+**segment-resolution + routing** combination remains unoccupied.
+
+---
+
+## Net effect on the thesis (all three papers)
 
 1. **Count model is now a per-type decision, not a default.** Gao's ZITD ≠ guaranteed for a type
    slice — Pathivada shows under-dispersion can appear, needing **CMP/HTCMP**. → measure dispersion
@@ -131,11 +208,17 @@ quartile risk scale**.
 2. **A complete per-type route-risk scalar already exists (Barabino H·V·E).** Adopt the decomposition
    and the section-sum + quartile-ranking; the thesis's additions are *cross-type contrast* and
    *arbitrary-O–D routing*, which Barabino lacks → the gap is sharper, not weaker.
-3. **EB joins the significance/screening-gate shortlist** (with Wei / Wang / Hu-CLQ) — and is the
-   HSM-standard option for ranking a per-segment risk surface.
-4. **Exposure confound reconfirmed twice:** both use *aggregate* exposure (AADT / passenger·km). The
-   thesis's per-type exposure (DfT AADF by vehicle type) is what distinguishes per-type *risk* from
-   per-type *volume* — still an open data-availability check.
+3. **EB + EPP join the significance/screening-gate shortlist** (with Wei / Wang / Hu-CLQ). EB
+   (Pathivada) is the HSM-standard option for ranking a per-segment risk surface; **EPP (Lee) is
+   inherently per-type** — observed − predicted *proportion* per vehicle type — and is the most
+   directly divergence-revealing gate after CLQ.
+4. **The niche premise is now externally supported, not just analogical (Lee 2018).** Vehicle-type
+   crash hot zones are demonstrated to diverge spatially (statewide Florida, 8 types). The thesis's
+   open question narrows to *segment-resolution + GB/STATS19 + routing exploitation* — the divergence
+   itself no longer has to be assumed.
+5. **Exposure confound reconfirmed three times:** all three use *aggregate* exposure (AADT /
+   passenger·km) or raw proportion. The thesis's per-type exposure (DfT AADF by vehicle type) is what
+   distinguishes per-type *risk* from per-type *volume* — still an open data-availability check.
 
 ## Links
 - [[AAP-abstract-refs]] — this journal's Phase-3 sweep record (keyword 2)
