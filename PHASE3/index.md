@@ -19,7 +19,7 @@ Updated after every reading record, progress note, query filed, or lint pass.
 
 | Page | Description |
 |------|-------------|
-| [[wiki/overview]] | Evolving thesis argument + project state (Phase 3) — *to be written* |
+| [[wiki/overview]] | Thesis argument + project state + literature landscape — written 2026-06-24; update after each stage |
 
 ---
 
@@ -101,4 +101,4 @@ System design and stage-by-stage implementation guides (output of 2026-06-23 sys
 
 ---
 
-*Last updated: 2026-06-23 | **SYSTEM PLAN COMPLETE.** Reading phase closed; 6-stage build plan fully designed (2026-06-23 session). GAT with vehicle-type-conditioned attention confirmed as AI core. Build files created for all 6 stages. Next: positioning-memo revamp, then start the build (Stage 1).*
+*Last updated: 2026-06-24 | **BUILD PHASE BEGINS.** Positioning-memo revamped (build design + validated niche baked in). wiki/overview.md written. All open decisions resolved except DfT AADF per-type (check in Stage 2). Next: Stage 1 — data prep.*

@@ -1,0 +1,107 @@
+[
+  {
+    "query_id": 1,
+    "collision_index": "2024451460192",
+    "variants": {
+      "A \u2014 Bare (control)": {
+        "output": "This collision occurred in a rural area with a single carriageway unclassified road and a 30mph speed limit. The collision was not at or within 20 metres of a junction. Lighting conditions at the time of the collision were daylight. Weather conditions were fine with no high winds. The road surface was dry.\n\nA 60-year-old male pedestrian (pedestrian) was involved in the collision.",
+        "crash_refs": 0,
+        "n_retrieved": 10
+      },
+      "B \u2014 Force-cite": {
+        "output": "Be extremely cautious when going ahead. Crash 2 involved a collision with a parked vehicle in an urban area. Crash 5 involved a collision with a parked vehicle in a rural area. Most recently, a collision involving a pedestrian occurred in an urban area (Crash 6).",
+        "crash_refs": 3,
+        "n_retrieved": 10
+      },
+      "C \u2014 Chain-of-thought": {
+        "output": "Okay, let's break down the crash data and formulate a driver warning.\n\n**Step 1: List the 2-3 most common crash patterns**\n\nBased on the provided crashes, the following patterns are most prevalent:\n\n1.  **Pedestrian collisions in rural areas:** Crashes involving pedestrians (pedestrians) occur in rural areas.\n2.  **Vehicle leaving the carriageway:** Vehicles leave the carriageway.\n3.  **Driver or rider (car occupant) involved in collision:** A driver or rider (car occupant) is involved in the collision.\n\n**Step 2: Write a 2-3 sentence driver warning that directly references those patterns.**\n\nHere's a driver warning incorporating those patterns:\n\n\"Be aware of pedestrians in rural areas. Always look out for road signs and other permanent objects in the carriageway. Slow down and go around any other vehicle going ahead.\"",
+        "crash_refs": 0,
+        "n_retrieved": 10
+      }
+    }
+  },
+  {
+    "query_id": 2,
+    "collision_index": "2022991162813",
+    "variants": {
+      "A \u2014 Bare (control)": {
+        "output": "Data analysis reveals a high number of collisions involving pedestrians and cyclists in the area. Specifically, there have been collisions involving a 15-year-old female pedestrian (pedestrian) in the most recent collision. The collision occurred at a 19. Junction control: Give way or uncontrolled. Lighting conditions at the time of the collision were daylight. Weather conditions were fine with no high winds. The road surface was dry.\n\n**Warning:** Be particularly cautious when moving off. Watch out for pedestrians and cyclists in the area.",
+        "crash_refs": 0,
+        "n_retrieved": 9
+      },
+      "B \u2014 Force-cite": {
+        "output": "Be extremely careful when turning right. Crash 1 involved a collision with a 66-year-old male pedestrian. Crash 2 involved a collision with a 6-year-old female passenger (car occupant, seated as rear seat passenger). Crash 5 involved a 61-year-old female driver or rider (car occupant) in a collision.",
+        "crash_refs": 3,
+        "n_retrieved": 9
+      },
+      "C \u2014 Chain-of-thought": {
+        "output": "Okay, let's break down the crash data and formulate a driver warning.\n\n**Step 1: Identifying Common Crash Patterns**\n\nReviewing the provided crashes, the following patterns emerge as most common:\n\n1.  **Pedestrian collisions at T or staggered junctions:** Crashes involving pedestrians occurred at T or staggered junctions (Crash 5, Crash 7, Crash 8).\n2.  **Car turning right:** Many of the collisions involved a car turning right. (Crash 5, Crash 7, Crash 8)\n3.  **Motorcycle 125cc and under collisions:** Crashes involving a motorcycle 125cc and under overturned. (Crash 9)\n\n**Step 2: Driver Warning Message**\n\nHere's a 2-3 sentence driver warning that directly references these patterns:\n\n\"Be particularly cautious at T or staggered junctions. Turn right with care, ensuring you give way to pedestrians and other vehicles.",
+        "crash_refs": 4,
+        "n_retrieved": 9
+      }
+    }
+  },
+  {
+    "query_id": 3,
+    "collision_index": "202160Z170482",
+    "variants": {
+      "A \u2014 Bare (control)": {
+        "output": "Data analysis shows a high risk of collisions involving car occupants and cyclists in urban areas. Drivers should be aware of vulnerable road users, particularly cyclists, and take extra care at junctions. Reducing speed and giving way to other road users are essential for safety.",
+        "crash_refs": 0,
+        "n_retrieved": 10
+      },
+      "B \u2014 Force-cite": {
+        "output": "Be extremely cautious when going ahead. Crash 1 involved a collision involving a car and a pedal cycle, with a 48-year-old male driver or rider (cyclist) involved. Crash 5 involved a collision involving 3 vehicles at a Crossroads. Most recently, Crash 10 involved a collision involving 1 vehicle (a car) at a 19. Junction control: Give way or uncontrolled. Lighting conditions at the time of the collision were darkness - lights lit. Weather conditions were fine with no high winds. The road surface was dry.",
+        "crash_refs": 3,
+        "n_retrieved": 10
+      },
+      "C \u2014 Chain-of-thought": {
+        "output": "Okay, let's break down the crash data and provide a driver warning.\n\n**Step 1: Most Common Crash Patterns**\n\nBased on the provided crash data, the most common crash patterns are:\n\n1.  **Pedestrian/Cyclist Collisions at Crossroads or Junctions:** Crashes involving a collision with a pedestrian or cyclist at a T or staggered junction or a Crossroads. Junction control is often Give way or uncontrolled. Lighting conditions are daylight. The road surface is dry.\n2.  **Vehicle Overruns/Left the carriageway:** Vehicle left the carriageway on the offside on to central res + rebounded. The first point of impact was the back of the vehicle.\n3.  **Turning Vehicles (Cars):** Crashes involving a vehicle turning left. The first point of impact was the front of the vehicle.\n\n**Step 2: Driver Warning**\n\nHere's a 2-3 sentence driver warning that directly references these",
+        "crash_refs": 0,
+        "n_retrieved": 10
+      }
+    }
+  },
+  {
+    "query_id": 4,
+    "collision_index": "2021010300656",
+    "variants": {
+      "A \u2014 Bare (control)": {
+        "output": "Data analysis shows a high number of collisions involving pedestrians in urban areas. Drivers should be particularly aware of pedestrians in urban areas, especially at junctions.",
+        "crash_refs": 0,
+        "n_retrieved": 10
+      },
+      "B \u2014 Force-cite": {
+        "output": "This location has a collision rate for pedestrians. Crash 1 involved a 31-year-old female pedestrian. Crash 2 involved a 54-year-old male pedestrian. Most recently, Crash 10 involved a 21-year-old female pedestrian. Be aware of pedestrians in the area.",
+        "crash_refs": 3,
+        "n_retrieved": 10
+      },
+      "C \u2014 Chain-of-thought": {
+        "output": "Okay, let's break down the crash data and formulate a driver warning.\n\n**Step 1: Most Common Crash Patterns**\n\nBased on the provided crashes, the most common crash patterns are:\n\n1.  **Turning Left:**  Several collisions (e.g., Crash 2, Crash 3, Crash 6, Crash 8) involve vehicles turning left.\n2.  **Going Ahead:** Several collisions (e.g., Crash 1, Crash 5, Crash 6, Crash 9) involve vehicles going ahead.\n3.  **Pedestrian in Collision:** A significant number of collisions involve pedestrians (e.g., Crashing into a 31-year-old female pedestrian (pedestrian) in Crash 1, a 54-year-old male pedestrian (pedestrian) in Crash 2, a 36-year-old female pedestrian (pedestrian) in Crash 4, a 14",
+        "crash_refs": 8,
+        "n_retrieved": 10
+      }
+    }
+  },
+  {
+    "query_id": 5,
+    "collision_index": "2022041172206",
+    "variants": {
+      "A \u2014 Bare (control)": {
+        "output": "This location has a high collision rate. Drivers should be particularly aware of parked vehicles in the carriageway. Pay close attention to road signs and markings. Slow down to 30mph in the area.",
+        "crash_refs": 0,
+        "n_retrieved": 10
+      },
+      "B \u2014 Force-cite": {
+        "output": "Be extremely cautious when going ahead. Crash 4 involved a collision with a parked vehicle in the carriageway. Crash 10 involved a collision with a parked vehicle in the carriageway. Crash 8 involved a collision with a parked vehicle in the carriageway.",
+        "crash_refs": 4,
+        "n_retrieved": 10
+      },
+      "C \u2014 Chain-of-thought": {
+        "output": "Okay, let's break down the crash data and formulate a driver warning.\n\n**Step 1: List the 2-3 most common crash patterns**\n\nThe most common crash patterns in the data are:\n\n1.  **Moving off collisions:** Several crashes involve vehicles moving off. (Van / Goods vehicle (3.5 tonnes mgw or under) collisions, Car collisions).\n2.  **Going ahead collisions:** Many crashes involve vehicles going ahead. (Car collisions, Van / Goods vehicle (3.5 tonnes mgw or under) collisions).\n3.  **Stopping/parked vehicle involved:** Crashes involving parked vehicles (especially the back of the vehicle) are common. (Car collisions, Van / Goods vehicle (3.5 tonnes mgw or under) collisions).\n\n**Step 2: Write a 2-3 sentence driver warning that directly references those patterns.**\n\nHere's a driver warning:\n\n\"Be particularly careful when moving",
+        "crash_refs": 0,
+        "n_retrieved": 10
+      }
+    }
+  }
+]

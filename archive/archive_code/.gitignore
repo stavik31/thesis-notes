@@ -1,0 +1,16 @@
+# Large data files — do not commit
+data/
+*.safetensors
+*.pt
+*.npy
+*.bin
+*.jsonl
+*.zip
+tokenizer.json
+tokenizer.model
+
+# Environments and build caches
+venv/
+unsloth_compiled_cache/
+__pycache__/
+*.pyc

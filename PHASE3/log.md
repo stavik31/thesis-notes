@@ -6,6 +6,18 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-06-24] ⏸ CHECKPOINT — build phase begins. Read this first next session.
+- **State: positioning-memo revamped; overview.md written; directory clean. Ready to build Stage 1.**
+- **What got done today:** (1) positioning-memo full revamp — grounded in now-validated niche premise (Lee 2018 + STATS19 probe) and finalized build design (GAT + type-conditioned attention); all previously-open decisions resolved or closed except DfT AADF per-type (first check in Stage 2); status updated to BUILD PHASE. (2) wiki/overview.md created — thesis argument + project state + literature landscape in advisor-handable form. (3) directory committed to git — clean state before Stage 1 starts.
+- **Lee et al. 2018 PDF** added to `tier1_journal3/` (paper already deep-read 2026-06-22; PDF just arrived).
+- **Two queued tasks, in order:** (1) **Stage 1 build** — data prep (clone STATS19, join tables, severity-weight, tag by vehicle type, temporal holdout split); (2) **DfT AADF per-type check** — first thing in Stage 2; drives exposure normalisation approach.
+- Notable: thesis direction is fully locked, niche premise is demonstrated, build design is committed. No further reading needed before Stage 1.
+
+## [2026-06-24] progress | Positioning-memo revamp + wiki/overview.md created
+- Positioning-memo revamped: [[positioning-memo]]. Key changes: status updated to BUILD PHASE; open decisions closed (GAT unified model, ML threshold, homogeneous segmentation, per-type dispersion check, output form = ranked routes + risk map); niche premise updated from "analogical" to "demonstrated" (Lee 2018 + STATS19 probe); Build Architecture section added with all locked decisions; evidence map marked complete.
+- Overview created: [[wiki/overview]]. Covers thesis argument, project state (reading done, building starting), key open question (DfT AADF per-type), and literature landscape.
+- Notable: positioning-memo is now the authoritative build-phase reference. The reading-phase uncertainty language is gone.
+
 ## [2026-06-23] ⏸ CHECKPOINT — system plan complete, build files created. Read this first next session.
 - **State: 6-stage build plan fully designed. Reading phase closed. Ready to start building.**
 - **What got done today:** full system planning session — walked all 6 stages, resolved architecture, created build files.

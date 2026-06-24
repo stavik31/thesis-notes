@@ -2,150 +2,170 @@
 title: "Phase 3 Positioning Memo — Risk-Aware Routing with a Vehicle-Type Niche (LIVING)"
 type: memo
 date: "2026-06-17"
-status: LIVING DRAFT — update as the reading pass proceeds
+last_updated: "2026-06-24"
+status: BUILD PHASE — reading closed 2026-06-22; build design locked 2026-06-23; building from 2026-06-24
 tags: [phase3, positioning, thesis-core, route-planning, decision]
 ---
 
 # Phase 3 Positioning Memo (LIVING)
 
-> **What this is.** A *living* statement of where the thesis stands right now. Unlike the
-> Phase 2 memo (a one-shot end-of-week synthesis), this file is updated as papers come in.
-> It always answers four questions in the current best form: **what field, what niche,
-> what system, what evidence so far.** Edit it; don't append a new one.
+> **What this is.** The authoritative statement of the thesis direction. Updated as the project
+> evolves — reading phase → build design → build → evaluation. Always answers four questions:
+> **what field, what niche, what system, what evidence.**
 >
-> **Status of the corpus (2026-06-17):** the pivot just happened. Risk-modeling
-> literature is well-covered (inherited from Phase 2); the *routing home* and the
-> *vehicle-type niche* are thinly covered and are the target of this reading pass.
+> **Status (2026-06-24):** Reading phase CLOSED. 6-stage build design LOCKED. Building from
+> today. The niche premise is no longer assumed — it is demonstrated on STATS19 data.
 
 ---
 
 ## The direction in one paragraph (current)
 
-This thesis contributes to **risk-aware route planning** — the field that ranks routes
-not only by time and distance but by crash risk (Jiang 2022; Sarraf 2020). Existing
-safe-route systems compute a single aggregate crash-risk score per road segment and route
-everyone by it. **They treat all vehicles the same.** But crash risk is not uniform across
-vehicle types: a motorcycle, an HGV, and a car face materially different risk on the same
-wet, unlit bend or the same busy junction. This thesis builds a routing system whose
-risk layer is **conditioned on vehicle type** (and, where the data supports it, on weather
-and time), so that the recommended route differs by what you are driving. STATS19 supplies
-the crash data (vehicle type is on every record); the method is jurisdiction-agnostic.
-**No natural-language layer** — the deliverable is the route and its risk breakdown, not a
-generated explanation (the LLM direction was cut as un-solidified and distracting).
+This thesis contributes to **risk-aware route planning** — the field that ranks routes not only
+by time and distance but by crash risk (Jiang 2022; Sarraf 2020). Existing safe-route systems
+compute a single aggregate crash-risk score per road segment and route everyone by it. **They
+treat all vehicles the same.** But crash risk is not uniform across vehicle types: a motorcycle,
+an HGV, and a car face materially different risk on the same wet bend or busy junction, and those
+differences are spatial — the segments that are dangerous for motorcycles are not the same
+segments that are dangerous for HGVs (Lee et al. 2018; confirmed on STATS19, 2026-06-22). This
+thesis builds a routing system whose risk layer is **conditioned on vehicle type**, so that the
+recommended route differs by what you are driving. STATS19 supplies the crash data (vehicle type
+is on every record); the method is jurisdiction-agnostic. **No natural-language layer** — the
+deliverable is the route and its risk breakdown, not a generated explanation (LLM direction cut as
+un-solidified and distracting, supervisor 2026-06-17).
 
 ---
 
-## Scope & depth — distinctive direction vs. system complexity (resolved 2026-06-18)
+## Scope & depth — distinctive direction vs. system complexity
 
-**Terminology, pinned (important — avoids a recurring confusion).** "Novelty" has two senses and the
-supervisor split them: (a) **breakthrough novelty** = inventing a new method/algorithm — **NOT
-required** ("I don't always need novelty"); (b) **the data niche** = applying *existing/borrowed*
-methods to a *new data direction* (vehicle type) — **explicitly asked for.** This thesis is firmly (b):
-**nothing is invented — everything built is borrowed** (CLQ gate, ZITD/NB engine, MCDM/mean-excess
-routing). The contribution is the **direction** that borrowed machinery is pointed, plus the
-**complexity** of the pipeline. So below, "distinctive direction" = the data-niche application, *not*
-breakthrough novelty.
+**Terminology, pinned.** "Novelty" has two senses and the supervisor split them: (a) **breakthrough
+novelty** = inventing a new method — **NOT required** ("I don't always need novelty"); (b) **the
+data niche** = applying existing/borrowed methods to a new data direction (vehicle type) — **explicitly
+asked for.** This thesis is firmly (b): **nothing is invented — everything is borrowed** (GAT
+architecture, MCDM ranking, CLQ spatial test, MPIW/PICP/AccHR@20 metrics). The contribution is the
+**direction** that borrowed machinery is pointed at, plus the **complexity** of the pipeline.
 
-The thesis is **two layers of one pipeline, not a choice between them.** A recurring point of
-confusion ("do we go deep into route optimization or into the vehicle-type niche?") is resolved as:
+The thesis is **two layers of one pipeline, not a choice between them:**
 
 ```
 STATS19 → [ RISK LAYER: per-vehicle-type crash-risk surface ]  = DISTINCTIVE DIRECTION (the data niche)
-        → [ ROUTING LAYER: risk + time + distance → routes   ]  = SYSTEM (the home — complexity)
-        → [ EVALUATION: type-aware vs aggregate routing       ]  = the PAYOFF check (does the direction diverge?)
+        → [ ROUTING LAYER: risk + time + distance → routes   ]  = SYSTEM COMPLEXITY (the home)
+        → [ EVALUATION: type-aware vs aggregate routing       ]  = the PAYOFF check
 ```
 
-**Both layers must be credible — but they earn their depth differently, and effort should be spent
-knowing which payoff you're buying:**
+- **Risk layer (per-vehicle-type)** — depth buys the distinctive direction. Every step deeper
+  (per-type significance gating, sparsity/zero-inflation handling, spatial divergence of hotspots
+  by type) directly strengthens the contribution. **This is the spine.**
+- **Routing layer** — depth buys complexity only. Go deep enough to build a credible
+  multi-objective router and **borrow** the machinery (Mansoor 2026 mean-excess/VI; Sarraf 2020
+  MCDM; Yen's k-shortest). Do not try to invent new routing optimisation.
 
-- **Risk layer (per-vehicle-type) — depth buys the DISTINCTIVE DIRECTION + rigor.** Every step deeper
-  (per-type significance gating, sparsity/zero-inflation handling, per-type exposure normalisation,
-  spatial divergence of hotspots by type) *directly strengthens the contribution*. **This is the spine
-  of the thesis** — but note it is **borrowed methods on new-directioned data, not a new method.**
-- **Routing layer — depth buys COMPLEXITY only.** Go deep enough to build a *credible* multi-objective
-  router, and **borrow** the machinery (Mansoor 2026 mean-excess/VI; Sarraf 2020 MCDM; Sohrabi & Lord
-  2022; Chandra 2014 Pareto/Yen). Going *deeper* (Pareto multi-objective, time-dependent, reliability)
-  adds the *system complexity* the supervisor rewards but **no additional distinctiveness**. Do **not**
-  try to invent new routing optimisation — that's not where the contribution lives.
-
-**The premise concern is JUSTIFICATION, not novelty.** The vehicle-type direction must actually *pay
-off*: if motorcycle hotspots and HGV hotspots are the *same places*, type-aware routing produces the
-*same routes* as aggregate routing → null result, nothing to show. So confirming spatial divergence by
-type (via the data probe + CLQ) isn't about being novel — it's about the application **not being a
-no-op.** That is the one thing that still must hold.
-
-**Why neither layer alone is a thesis:** pure routing optimisation = no data niche = nothing distinctive
-(an examiner asks "Sarraf already does multi-criteria safe routing — what's yours?"); pure vehicle-type
-risk = just another crash-risk-modelling paper (Gao already does STATS19 segment risk) with no applied
-home. The **combo is the deliverable**: the data niche supplies the distinctiveness, the multi-stage
-pipeline supplies the complexity — the 2026-06-17 supervisor framing ("complexity over novelty" + "a
-data niche nobody explored, e.g. vehicle type").
-
-**One-line scope:** *go decently deep in both layers; the spine is per-vehicle-type risk (the data-niche
-direction — borrowed methods, new data), and the routing optimisation is the borrowed-and-deepened
-system that delivers it (complexity). No method is invented; the only thing that must hold is that the
-vehicle-type direction actually diverges (justification, not novelty).*
+**The premise concern is JUSTIFICATION, not novelty.** The vehicle-type direction must pay off: if
+motorcycle hotspots and HGV hotspots are the same places, type-aware routing produces the same
+routes as aggregate routing → null result. This has now been confirmed: the STATS19 probe (2026-06-22)
+shows motorcycle 72% urban vs HGV 61% rural, per-cell count correlation 0.24 (vs ~0.41 at random).
+The divergence is real at segment resolution. The open engineering risk is **HGV sparsity** (~80–91%
+of cells zero-HGV), not whether the effect exists.
 
 ---
 
-## The four questions (kept current)
+## The four questions
 
 ### 1. What field? — Risk-aware / safety-aware route planning
-The home is routing, not crash-risk-modeling-as-an-end. CRM (Gao 2024 etc.) is the
-*engine* that produces the per-segment risk the router consumes. Predecessors:
-- **Jiang 2022** — Safe Route Mapping (SPF/EB/HSM → per-segment risk → safe-route heat maps). **The home paper.**
-- **Sarraf 2020** — MCDM Safe Route Planner (combines risk + time + distance into ranked routes; eval via Spearman/Overlap/DCG). **The routing-layer + eval template.**
-- **de Souza 2020** — Safety-aware re-routing with *per-vehicle* risk-type selection (risk = crime; precedent for personalization, not a crash baseline).
-- *Gap so far:* none of them condition the risk layer on vehicle type. ← the opening.
+
+The home is routing, not crash-risk modeling as an end. CRM (Gao 2024 etc.) is the *engine*
+that produces per-segment risk; the router consumes it.
+
+| Paper | Role |
+|---|---|
+| Jiang 2022 (T-ITS) | Home paper — SPF/EB/HSM → per-segment risk heat maps; **names the gap in print** ("risks not dependent on vehicle types") |
+| Sarraf 2020 (ESWA) | The actual router — Dijkstra + MCDM + eval template (Spearman/AO/DCG); vehicle-blind |
+| Sohrabi & Lord 2022 (TR-C) | Operational home — 29k Texas segments; NB weather-stratified; **8% time → +23% crash**; survival-prob route aggregation |
+| Mansoor, Li, Chen 2026 (TR-C) | ★★★ Structural ancestor — class-specific route choice sets + mean-excess (CVaR) crash-severity tail; re-key on vehicle type = the per-type routing mechanism |
+| Kavta et al. 2025 (TR-C) | Demand-side niche brick — a vehicle class (delivery riders) will trade time for safety |
+| Chandra 2014 (TR-C) | Closest user-conditioned routing precedent; parametric/crash-data-free; donates Pareto/Yen multi-objective machinery |
+| de Souza 2020 (T-ITS) | Personalisation precedent (crime risk, not crash); abstract only |
+
+**Gap across the whole corpus:** no paper routes by a data-driven per-vehicle-type crash-risk
+surface. Mansoor hands the mechanism; nobody has executed it on crash data.
 
 ### 2. What niche? — Vehicle-type-conditioned segment crash risk
-The novelty the supervisor asked for ("find a niche in the data nobody explored"):
-- **Premise — now DEMONSTRATED, not just analogical (upgrade 2026-06-22, Lee et al. 2018).** The
-  load-bearing claim — *different vehicle types are risky in different places* — now has direct
-  real-data support: Lee et al. 2018 (AAP) screened statewide Florida crashes by 8 vehicle types and
-  found **"the spatial pattern of hot zones is substantially different across vehicle types"** (HGV→rural,
-  bicycle→metro, pedestrian→urban, motorcycle→rural). This is the spatial-divergence brick the niche
-  was missing. **Caveats that keep work for the thesis:** it's at TAZ (macro) level not segment, uses
-  crash *proportion* not exposure-normalised risk, and doesn't route — so the *segment-resolution + GB
-  + routing-exploitation* combination is still ours to build/prove. The premise no longer has to be
-  assumed; the open question is whether it survives at segment resolution on STATS19.
-- **Earlier premise sources, in context:** Zhu 2025 is "vehicle-**group**" not "vehicle-**type**" (dynamic
-  interaction clusters, real-time/microscopic; type = 1 of 8 node features) → method-cousin + Abdel-Aty
-  anchor, **not** premise. Pathivada 2025 + Barabino 2021 confirm a per-type risk surface is *buildable*
-  but are single-type (no divergence). Lee 2018 is the one that supplies the cross-type spatial claim.
-  See [[T-ITS-deepread]], [[tier1_journal3/AAP-deepread]].
-- **Unoccupied for routing:** no paper in the corpus routes by vehicle type. Sarraf's router even
-  normalises by AADT but has **no vehicle-type term** (deep-read confirmed — [[ESWA-deepread]]).
-- **Combinable:** vehicle type as the primary axis; weather/time as secondary axes added
-  only where a per-cell crash count is significant (graceful fallback otherwise — this
-  multi-dimensional-sparsity handling is itself system complexity).
-- *Alternatives considered:* vulnerable-road-user exposure, manoeuvre type, junction type.
-  Vehicle type leads on availability + intuition + clean one-line pitch.
 
-### 3. What system? (complexity = the thesis, per the supervisor)
-Multi-stage pipeline:
-1. STATS19 → segment-level crash records, tagged by vehicle type.
-2. Spatial segmentation (road link / grid / DBSCAN — open decision, gates everything).
-3. **Per-segment, per-vehicle-type risk profiling** with a significance/overrepresentation
-   gate (which type×condition patterns are non-random vs the network baseline).
-4. Risk-model handling of sparsity (~96% zero-inflation; fatal ~1.5%) — Zero-Inflated
-   Tweedie (Gao) / imbalance shelf.
-5. **Routing layer** — given origin + destination + vehicle type, score candidate routes
-   on combined risk + time + distance (MCDM, Sarraf lineage).
-6. Output: ranked routes + vehicle-type-specific risk-scored map. **No LLM.**
+The novelty the supervisor asked for: a dimension in STATS19 nobody has used for routing.
+
+**Niche premise — DEMONSTRATED (as of 2026-06-22), not assumed:**
+
+- **Lee et al. 2018 (AAP)** — statewide Florida, 8 vehicle types, TAZ level: *"the spatial pattern
+  of hot zones is substantially different across vehicle types"* (HGV→rural, bicycle→metro,
+  pedestrian→urban, motorcycle→rural). First real-data evidence that vehicle-type hot zones diverge
+  *as places*. [[tier1_journal3/AAP-deepread]]
+- **STATS19 informal probe (2026-06-22)** — segment level on Great Britain: motorcycle crashes
+  72% urban vs HGV 61% rural; per-cell count correlation moto~HGV = 0.24 (vs ~0.41 random) →
+  types are actively spatially segregated. **Divergence survives at segment resolution.**
+- **HGV sparsity (~80–91% cells zero-HGV)** = the main engineering risk, not an existential
+  threat. EB shrinkage toward a coarse unit, CMP/HTCMP family for under-dispersed slices, and the
+  graceful fallback in Stage 4 are the response.
+
+**Unoccupied for routing:** no paper in the corpus routes by vehicle type. Sarraf's router even
+normalises by AADT but has **no vehicle-type term** — confirmed in deep read.
+
+**Combinable:** vehicle type as the primary axis; weather/time as secondary axes only where a
+per-cell crash count is significant (graceful fallback when it isn't = a complexity feature, not a bug).
+
+### 3. What system? — The 6-stage pipeline
+
+The full build design is in `wiki/build/`. Summary:
+
+| Stage | What |
+|---|---|
+| 1 | Data prep — clean STATS19, join tables, severity-weight (fatal=3/serious=2/slight=1), tag by vehicle type |
+| 2 | Segmentation — OS Open Roads network; homogeneous segmentation (cut where road class/lanes/speed/AADF changes); map-match crashes; attach AADF |
+| 3 | **GAT risk model** — vehicle-type-conditioned attention; single unified model; per-type dispersion check picks loss function |
+| 4 | Risk surface filtering — threshold on GAT output; CLQ post-hoc for spatial divergence maps (not a production gate) |
+| 5 | Routing — Yen's k-shortest paths + MCDM ranking (AHP/PROMETHEE) per vehicle type; vehicle-type-conditioned edge weights |
+| 6 | Evaluation — precision@X% (Gao) + Sarraf metrics + counterfactual |
+
+**Offline/online split:** Stages 1–4 run once, offline. Stage 5 answers queries live over precomputed risk scores.
 
 ### 4. What evidence / evaluation?
-- **Risk-model validity:** temporal holdout, *per vehicle type* (profiles on years 1–4,
-  test year 5) + precision@top-X% high-risk segments (Gao metrics).
-- **Routing quality:** Spearman rank correlation, Average Overlap, DCG (Sarraf metrics).
-- **Headline result:** does vehicle-type-aware routing *diverge* from aggregate routing
-  for the same O–D pair, and does the divergence track real per-type crash patterns?
-  Counterfactual: would a motorcyclist routed by this system pass through fewer historical
-  *motorcycle*-crash segments than under shortest-path / aggregate-risk routing?
+
+- **Risk-model validity:** temporal holdout — profiles on years 1–4, test year 5. Precision@top X%
+  high-risk segments per vehicle type; GAT vs naive (raw severity-weighted count) baseline comparison.
+  Metrics borrowed from Gao 2024 (MPIW/PICP/AccHR@20).
+- **Routing quality:** Spearman rank correlation, Average Overlap, DCG on a test set of O-D pairs.
+  Compare type-aware vs aggregate-risk vs shortest-path routes. Metrics borrowed from Sarraf 2020.
+- **Headline result — counterfactual:** for each test O-D pair and vehicle type, count year-5
+  crashes of that type on the type-aware route vs shortest-path route vs aggregate-risk route. Does
+  type-aware routing consistently pass through fewer historical type-specific crash segments?
+- **Divergence test (niche headline):** for each O-D pair, does the motorcycle route and the HGV
+  route differ? Average Overlap between type routes across all test pairs. Cross-reference with
+  CLQ spatial divergence maps.
 
 ---
 
-## What changed from Phase 2 (the pivot, for the audit trail)
+## Build architecture — locked decisions
+
+These were open during the reading phase and are now resolved.
+
+| Decision | Choice | Rationale |
+|---|---|---|
+| Separate models per type vs unified | **Unified GAT with type embeddings** | Sparse types (HGV) borrow strength from dense types through shared backbone; preserves cross-type spatial relationships |
+| Significance gate (production) | **ML threshold on GAT output** | GAT already does spatial smoothing through message passing; a separate statistical test is redundant overhead |
+| CLQ role | **Post-hoc analysis only** | Generates spatial divergence maps for the results section; confirms where hotspots diverge by type |
+| Per-type loss function | **Per-type dispersion check in Stage 3** — do not assume | Per-type slices can flip the count regime: motorcycle = under-dispersed (CMP/HTCMP; Pathivada 2025); aggregate = over-dispersed (NB/ZITD; Gao 2024) |
+| Segment definition | **Homogeneous segmentation** (Pathivada lineage) — v1 = grid, v2 = homogeneous | Real road geometry; HSM-standard; pooled so less sparse; build v1 grid first |
+| Routing mechanism | **Yen's k-shortest + MCDM (AHP/PROMETHEE)** | Sarraf operational template; Mansoor class-specific route sets as reference |
+| Tail risk (CVaR/mean-excess) | **Decide in Stage 5 with real risk surface** | May add it if risk surface has a meaningful tail; don't design around it blind |
+| LLM explanation layer | **Cut** | Faithfulness unsolvable in time; language distracting to drivers; not solidified enough (supervisor 2026-06-17) |
+| Reinforcement learning | **Not used** | Poor fit for offline precomputed graph routing; Dijkstra/Yen's is the correct tool |
+| Output form | **Both** — ranked routes + vehicle-type-specific risk-scored map | |
+
+**One remaining open question:** DfT AADF per-type availability at segment level. First check in
+Stage 2. If unavailable: use national vehicle-type share fractions as a proxy and document the
+approximation.
+
+---
+
+## What changed from Phase 2 (audit trail)
 
 | | Phase 2 (CRM + LLM) | Phase 3 (routing + niche) |
 |---|---|---|
@@ -161,97 +181,45 @@ explanation/faithfulness/LLM half is **future-work**, not core.
 
 ---
 
-## Open decisions (to resolve as reading + design proceed)
-
-1. **The niche — vehicle type confirmed, or combine with a 2nd axis from the start?**
-   (Leaning: vehicle type primary, weather/time secondary where data allows.)
-2. **Segment definition** — road link vs grid vs DBSCAN (gates the whole build). *Cheap HSM-aligned
-   option found (Pathivada 2025): **homogeneous segmentation** — cut where road class / # lanes /
-   posted speed / AADT changes.*
-3. **Significance test** — candidates now: chi-square overrepresentation (Wang lineage) vs **Empirical
-   Bayes (Pathivada 2025 — HSM-standard, RTM-corrected high-crash ranking)** vs Bayesian network vs
-   **Colocation Quotient (Hu 2018 — per-type spatial overrepresentation, Monte-Carlo significance,
-   network-distance, MAUP-aware)** vs case-crossover matched control (Wei) vs **EPP (Lee 2018 —
-   observed−predicted proportion per type, HSM-analogous, model-based)**.
-   Baseline = network-wide vs road-class-specific; min-crash threshold per cell. (CLQ is the most
-   *spatial* and most directly per-type — strong contender, ties to Phase-1 spatial assets.)
-3b. **Per-type count family (new, Pathivada 2025).** Don't assume Gao's ZITD (over-dispersion +
-   zero-inflation, tuned on aggregate) transfers to a vehicle-type slice: motorcycle-only segment
-   crashes were **under-dispersed**, where NB/ZITD fail and **CMP/HTCMP** is the right family.
-   → decide the count model *per type, after measuring dispersion in the probe*, not network-wide.
-4. **Auxiliary datasets** — OS road network + Met Office weather + DfT AADF (exposure) are
-   high-value, low-cost. A second crash dataset only if a chosen niche is data-starved.
-5. **Output form** — ranked routes vs risk-map overlay vs both.
-6. **⚠ FEASIBILITY (existential, NOT a reading question) — per-type density probe.** Does STATS19
-   have enough motorcycle/HGV crashes *per segment* to build a stable per-vehicle-type risk surface?
-   Aggregate zero-inflation ~96% (Gao); per-type far worse. **An early data probe must answer this**
-   (slice STATS19 by vehicle-type × segment; inspect sparsity) — it gates segment-definition (#2)
-   and how many secondary axes (#1) are affordable. Run it in *parallel* with the first niche-premise
-   reads, not after. Linked sub-risk: **per-type exposure** — does DfT AADF resolve by vehicle type
-   so per-type risk isn't confounded with per-type volume?
-   - *Data point now in hand (Pathivada 2025, AAP):* on a real motorcycle-only segment slice the
-     count regime was **under-dispersed** (variance < mean) — the opposite of aggregate. So the probe
-     must report **per-type dispersion + zero rate** (not just "is it sparse"), because the answer
-     picks the count family (ZITD vs CMP/HTCMP, see #3b). Their study controlled zeros to ~20%, so it
-     does *not* settle STATS19's true per-type zero rate — that's still ours to measure.
-
----
-
-## Evidence map (running — updated as papers land)
+## Evidence map (complete — reading phase closed 2026-06-22)
 
 ### Routing home
+
 | Paper | Role | Status |
 |---|---|---|
-| Jiang 2022 (T-ITS) | home = risk **engine** (NB/EB heat map, **not** a router; names the gap in print) | **deep-read full text (2026-06-18)** — [[T-ITS-deepread]] |
-| Sarraf & McGuire 2020 (ESWA) | the actual **router** (Dijkstra + MCDM) + eval template (Spearman/AO/DCG); vehicle-blind | **deep-read full text (2026-06-18)** — [[ESWA-deepread]] |
-| de Souza 2020 (T-ITS) | personalization precedent | abstract only |
-| **Mansoor, Li, Chen 2026 (TR-C)** | ★★★ **structural ancestor**: class-specific route choice sets + mean-excess (CVaR) crash-severity tail — the per-type routing *mechanism*, keyed on safety preference not vehicle type | **deep-read (2026-06-18)** — [[TR-C-deepread]] |
-| **Sohrabi & Lord 2022 (TR-C)** | operational home + motivation: safest-vs-shortest on 29k Texas segments; NB models stratified by weather; **8% time → +23% crash**; survival-prob route aggregation | **deep-read (2026-06-18)** — [[TR-C-deepread]] |
-| **Kavta et al. 2025 (TR-C)** | **demand-side niche brick**: a vehicle class (delivery riders) *will* trade time for safety (VRR/WTA); SP/behavioural | **deep-read (2026-06-18)** — [[TR-C-deepread]] |
-| **Chandra 2014 (TR-C)** | closest **user-conditioned** routing precedent (older drivers/bicyclists) — but parametric (speed+PRT), crash-data-free, **no per-type risk surface**; donates multi-objective (Pareto/Yen) routing machinery | **deep-read (2026-06-18)** — [[TR-C-deepread]] |
-
-> **Structural finding (deep read):** Jiang = engine (risk score → heat map, no routing);
-> Sarraf = router (consumes a per-segment score, ranks routes). **engine + router = the
-> assembled stack; the thesis conditions both on vehicle type.** TR-C deep reads add the
-> *mechanism* to do it: **Mansoor's class-specific route choice sets + mean-excess crash-severity
-> tail, re-keyed from safety-preference class → vehicle type.** Mansoor names heavy-vehicle risk in
-> its motivation yet omits vehicle type even from future work — the gap is wide open in the newest
-> (2026) safety-routing-equilibrium work.
+| Jiang 2022 (T-ITS) | Home = risk engine (NB/EB heat map, not a router; names the gap in print) | deep-read — [[T-ITS-deepread]] |
+| Sarraf & McGuire 2020 (ESWA) | The actual router (Dijkstra + MCDM) + eval template; vehicle-blind | deep-read — [[ESWA-deepread]] |
+| Mansoor, Li, Chen 2026 (TR-C) | ★★★ Structural ancestor — class-specific route sets + mean-excess CVaR tail | deep-read — [[tier1_journal2/TR-C-deepread]] |
+| Sohrabi & Lord 2022 (TR-C) | Operational home — NB weather-stratified; 8%/+23%; survival-prob aggregation | deep-read — [[tier1_journal2/TR-C-deepread]] |
+| Kavta et al. 2025 (TR-C) | Demand-side niche brick — riders trade time for safety | deep-read — [[tier1_journal2/TR-C-deepread]] |
+| Chandra 2014 (TR-C) | User-conditioned routing precedent; crash-data-free; donates Pareto/Yen machinery | deep-read — [[tier1_journal2/TR-C-deepread]] |
+| de Souza 2020 (T-ITS) | Personalisation precedent (crime risk) | abstract only |
 
 ### Vehicle-type niche evidence
+
 | Paper | Role | Status |
 |---|---|---|
-| Zhu et al. 2025 (T-ITS) | ⚠ vehicle-**group** (not type); method-cousin + Abdel-Aty anchor, **weak premise** | **deep-read full text (2026-06-18)** — [[T-ITS-deepread]] |
-| **Hu, Zhang, Shelton 2018 (TR-C)** | **method to GENERATE the spatial-divergence-by-type evidence**: Colocation Quotient (GCLQ+LCLQ) = per-category spatial significance test. (Premise only analogical — combines ped+cyclist, not motor-vehicle classes.) Gap is thin partly because colocation-in-transport-safety is itself new (2018) | **deep-read full text (2026-06-18)** — [[TR-C-deepread]] |
-| **Lee, Yasmin, Eluru, Abdel-Aty & Cai 2018 (AAP)** | ★★★ **THE SPATIAL-DIVERGENCE BRICK** — first real-data evidence that vehicle-type crash hot zones diverge as *places*: "spatial pattern of hot zones is substantially different across vehicle types" (statewide Florida, 8 types; HGV→rural, bicycle→metro, pedestrian→urban). Mixed MNL fractional split on crash *proportions* by TAZ. Donates **EPP** (observed−predicted proportion = per-type HSM screening gate). Macro/TAZ not segment; proportion not exposure-normalised; no routing | **deep-read (2026-06-22)** — [[tier1_journal3/AAP-deepread]] |
-| **Pathivada et al. 2025 (AAP)** | ★ **motorcycle-specific segment SPF** (Kentucky rural multilane). **Per-type slice flips the count regime → UNDER-dispersion** (NB/ZITD inappropriate; needs CMP/HTCMP). Donates CMP family + EB high-crash ranking + homogeneous segmentation. Aggregate-AADT exposure; single-type (no divergence); no routing | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
-| **Barabino et al. 2021 (AAP)** | ★★ **structural precedent**: per-vehicle-type (bus) **R = H·V·E** (freq × severity × exposure) per section → summed → route risk → quartile 4-level ranking. Closest existing per-type→route-risk→ranked-output pipeline (bus-only, fixed lines = screening, not routing). Donates risk decomposition + section-sum + binary-severity collapse for rare fatals | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
-| Freeway-segment LCA/LPA (AAP) | heterogeneity by geometry | abstract only |
-| *(spatial-divergence at SEGMENT resolution on GB/STATS19 still ours to produce — Lee proves it at TAZ/Florida; the segment + routing combination is the open space)* | | this pass |
+| Lee, Yasmin, Eluru, Abdel-Aty & Cai 2018 (AAP) | ★★★ **THE SPATIAL-DIVERGENCE BRICK** — hot zones "substantially different across vehicle types" (FL, 8 types); donates EPP per-type gate | deep-read — [[tier1_journal3/AAP-deepread]] |
+| Barabino et al. 2021 (AAP) | ★★ Structural precedent — R=H·V·E per-bus-route risk → section-sum → quartile ranking; closest per-type→route-risk→ranked-output pipeline | deep-read — [[tier1_journal3/AAP-deepread]] |
+| Pathivada et al. 2025 (AAP) | Motorcycle segment SPF — per-type slice flips to under-dispersion → CMP/HTCMP; donates EB ranking + homogeneous segmentation | deep-read — [[tier1_journal3/AAP-deepread]] |
+| Hu, Zhang, Shelton 2018 (TR-C) | **Method donor** — Colocation Quotient (GCLQ+LCLQ) = per-type spatial significance test; Monte-Carlo p-values; network-distance; MAUP-aware | deep-read — [[tier1_journal2/TR-C-deepread]] |
+| Zhu et al. 2025 (T-ITS) | Vehicle-**group** (not type); method-cousin + Abdel-Aty anchor; **weak premise** | deep-read — [[T-ITS-deepread]] |
+| STATS19 informal probe 2026-06-22 | Segment-level confirmation: moto 72% urban / HGV 61% rural; moto~HGV correlation 0.24 (random ~0.41); HGV ~80–91% zero-cell | deliberate non-artifact |
 
-> **Reframe (2026-06-18, UPDATED 2026-06-22):** the spatial-divergence-by-type premise is no longer
-> thin — **Lee et al. 2018 demonstrates it directly** (statewide Florida, 8 vehicle types, hot zones
-> "substantially different" across types). So the premise has external support; the thesis is no longer
-> *manufacturing it from nothing*, it's **replicating a demonstrated effect at finer (segment) resolution
-> on a new jurisdiction (GB/STATS19) and then exploiting it for routing** — a much safer position. The
-> per-type density probe (Open Decision #6) stays central as the *segment-level* feasibility + evidence
-> step; running Hu's CLQ per vehicle type on STATS19 is now a *confirmation/refinement* of a known effect
-> rather than a gamble on whether it exists at all.
+### Risk engine + significance gate (inherited from Phase 2 reading, solid)
 
-### Risk engine + significance gate (inherited, solid)
 | Paper | Role | Status |
 |---|---|---|
-| Gao 2024 (AAP) | STATS19 segment-risk engine; ZITD borrow (~96% zero-inflation); MPIW/PICP/AccHR@20 metrics | **deep-read full text (2026-06-18)** — [[AAP-deepread]] |
-| Wei 2024 (AAP) | gate ancestor #1: case-crossover matched-control design (quasi-Poisson DLM/DLNM) | **deep-read full text (2026-06-18)** — [[AAP-deepread]] |
-| Wang 2025 (AAP) | gate ancestor #2: χ²-CI Bayesian network (Bonferroni; BDs for sparse cells) | **deep-read full text (2026-06-18)** — [[AAP-deepread]] |
-| **Hu 2018 (TR-C)** | gate candidate #3: **Colocation Quotient** (per-type spatial overrepresentation, Monte-Carlo significance, network-distance, MAUP-aware) — ties to Phase-1 spatial/Cramér's-V assets | **deep-read (2026-06-18)** — [[TR-C-deepread]] |
-| **Pathivada 2025 (AAP)** | gate/screening candidate #4: **Empirical Bayes** high-crash-location ranking (HSM-standard, RTM-corrected via SPF dispersion) + **CMP/HTCMP** as the per-type count engine when a slice is under-dispersed (≠ Gao's ZITD) | **deep-read (2026-06-19)** — [[tier1_journal3/AAP-deepread]] |
-| **Lee 2018 (AAP)** | gate/screening candidate #5: **EPP (Excess Predicted Proportion)** = observed − predicted *proportion* per vehicle type, HSM-analogous. **Inherently per-type and divergence-revealing** (most directly fits the niche after CLQ); needs a fitted proportion model (complements model-free CLQ) | **deep-read (2026-06-22)** — [[tier1_journal3/AAP-deepread]] |
+| Gao 2024 (AAP) | STATS19 segment-risk engine; ZITD for ~96% zero-inflation; MPIW/PICP/AccHR@20 | deep-read — [[AAP-deepread]] |
+| Wei 2024 (AAP) | Gate ancestor — case-crossover matched-control (quasi-Poisson DLM/DLNM) | deep-read — [[AAP-deepread]] |
+| Wang 2025 (AAP) | Gate ancestor — χ²-CI Bayesian network (Bonferroni; BDs for sparse cells) | deep-read — [[AAP-deepread]] |
 
 ---
 
 ## Links
 
-- `PLAN.md` — the Phase 3 reading plan (journals, keywords, tiers)
-- `../PHASE2/positioning-memo.md` — the superseded CRM/LLM memo (audit trail)
-- `../PHASE1/wiki/progress/NEW_FIX_PROF.md` — the segment/significance design that survives
+- `PLAN.md` — the Phase 3 reading plan (journals, keywords, tiers) — reading complete
+- `wiki/build/system-overview.md` — full 6-stage pipeline with data sources + AI architecture
+- `wiki/build/stage-3-gat-risk-model.md` — the AI core
+- `wiki/build/stage-6-evaluation.md` — full evaluation design
+- `../PHASE2/positioning-memo.md` — the superseded CRM/LLM memo (audit trail of the 2026-06-17 pivot)
