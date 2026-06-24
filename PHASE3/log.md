@@ -6,6 +6,15 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-06-24] ⏸ CHECKPOINT — Stage 1 complete. Read this first next session.
+- **State: Stage 1 done. crashes_clean.csv produced. Ready for Stage 2.**
+- **What got done today:** full directory restructure (PHASE1/PHASE2/old code → archive/); positioning-memo revamped to BUILD PHASE; wiki/overview.md created; code/ scaffolded with 6-stage structure + fresh .venv; Stage 1 script written, walked through, and run successfully.
+- **Stage 1 output:** `code/outputs/crashes_clean.csv` — 888,965 rows, one per vehicle per crash. Columns: collision_index, latitude, longitude, vehicle_type, severity_weight, accident_year. 5 types: car (642k), motorcycle (85k), cycle (81k), lgv (58k), hgv (21k). Years: 2020–2024 (train 2020–2023, holdout 2024).
+- **Key decision made:** pedal cycles added as a 5th type (code 1, 81k records — spatial divergence TBC in Stage 4 CLQ).
+- **Environment:** fresh venv at `code/.venv`; run scripts with `code/.venv/bin/python`; old `.venv` at thesis root is broken (NumPy incompatibility), ignore it.
+- **Next — Stage 2:** (1) download OS Open Roads from ordnancesurvey.co.uk; (2) segment the road network (homogeneous segmentation); (3) map-match crashes onto segments. New dependency: geopandas.
+- Notable: thesis root `.venv` is dead — always use `code/.venv` going forward.
+
 ## [2026-06-24] ⏸ CHECKPOINT — build phase begins. Read this first next session.
 - **State: positioning-memo revamped; overview.md written; directory clean. Ready to build Stage 1.**
 - **What got done today:** (1) positioning-memo full revamp — grounded in now-validated niche premise (Lee 2018 + STATS19 probe) and finalized build design (GAT + type-conditioned attention); all previously-open decisions resolved or closed except DfT AADF per-type (first check in Stage 2); status updated to BUILD PHASE. (2) wiki/overview.md created — thesis argument + project state + literature landscape in advisor-handable form. (3) directory committed to git — clean state before Stage 1 starts.
