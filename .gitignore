@@ -14,5 +14,9 @@ Thumbs.db
 .venv/
 unsloth_compiled_cache/
 
+# Code data and outputs (large files — keep local only)
+code/data/
+code/outputs/
+
 # Editor
 .vscode/
