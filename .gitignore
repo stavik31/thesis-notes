@@ -17,6 +17,7 @@ unsloth_compiled_cache/
 # Code data and outputs (large files — keep local only)
 code/data/
 code/outputs/
+code/map.html
 
 # Editor
 .vscode/

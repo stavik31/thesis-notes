@@ -1,1 +1,7 @@
 pandas
+geopandas
+shapely
+networkx
+pyogrio
+folium
+mapclassify

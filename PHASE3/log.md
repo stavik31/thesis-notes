@@ -6,6 +6,22 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-06-25] ⏸ CHECKPOINT — Stage 2 complete. Ready for Stage 3.
+- **State: Stage 2 ran successfully. All three outputs produced. Ready for Stage 3 (GAT risk model).**
+- **What got done today:** walkthrough of `segment.py` section by section + `data_viewer.ipynb` map cell; two bugs fixed before running (wrong OS Roads path, missing `Data/` subdirectory; wrong column rename keys — `id` not `identifier`, `road_classification` not `roadClassification`); AADF sjoin dedup fix (+553 duplicate rows from equidistant count points); `low_memory=False` to suppress DtypeWarning; timing/progress prints added throughout.
+- **Stage 2 outputs:** `segments.gpkg` — 3,961,077 segments; `crashes_segmented.csv` — 885,297 rows (99.6% match rate, 3,668 dropped outside 25m); `graph_edges.csv` — 6,878,621 edges. Total runtime 103s.
+- **Vehicle type counts after map-matching:** car 640k, motorcycle 85k, cycle 81k, lgv 58k, hgv 21k.
+- **Notable:** 41.7% of segments used road-class-mean AADF fallback (expected — DfT count points only cover major roads; documented thesis limitation).
+- **Next — Stage 3:** GAT risk model with vehicle-type-conditioned attention. Build the per-(segment, vehicle_type) risk score.
+
+## [2026-06-24] ⏸ CHECKPOINT — Stage 2 script written, data downloaded. Deep walkthrough next session.
+- **State: Stage 2 script ready. All data in place. NOT yet run — deep code walkthrough first next session.**
+- **What got done today (second session):** Stage 2 script written (`code/stage2_segmentation/segment.py`); DfT AADF (`dft_traffic_counts_aadf.csv`) and count points downloaded and unzipped to `code/data/`; OS Open Roads downloading (1.03 GB, update `OS_ROADS_FILE` path in script once unzipped); requirements updated (geopandas, shapely, networkx, pyogrio, folium, mapclassify); interactive visualization cell added to `data_viewer.ipynb` (folium map, segments + crashes, layer toggle); AADF file confirmed one row per count point per year — direction-aggregation step removed from script.
+- **Install before running:** `code/.venv/bin/pip install geopandas shapely networkx pyogrio folium mapclassify`
+- **One thing to do before next session:** unzip OS Open Roads, find the `.gpkg` file path, update `OS_ROADS_FILE` in `segment.py`.
+- **Next session:** (1) deep walkthrough of `segment.py` — every step, what it does and why; (2) run Stage 2; (3) open visualization in `data_viewer.ipynb`.
+- Notable: AADF nearest-count-point join is a known accuracy limitation for minor roads — documented as thesis limitation (standard approach across all routing papers cited).
+
 ## [2026-06-24] ⏸ CHECKPOINT — Stage 1 complete. Read this first next session.
 - **State: Stage 1 done. crashes_clean.csv produced. Ready for Stage 2.**
 - **What got done today:** full directory restructure (PHASE1/PHASE2/old code → archive/); positioning-memo revamped to BUILD PHASE; wiki/overview.md created; code/ scaffolded with 6-stage structure + fresh .venv; Stage 1 script written, walked through, and run successfully.
