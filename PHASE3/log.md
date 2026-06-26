@@ -6,6 +6,13 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-06-26] ⏸ CHECKPOINT — GAT teaching session complete. Stage 3 code starts tomorrow.
+- **State: Stage 2 complete. GAT concepts understood. Ready to write Stage 3 code next session.**
+- **What got done today:** teaching session on GNNs and GATs — no code written. Covered: message passing + weight matrices (confirmed user's baseline was correct); node embeddings vs vehicle-type embedding table (lookup mode selector); why type embedding goes before attention (so α_ij is type-conditioned); why crash counts + embedding are both needed (evidence vs query); layer stacking rationale (2-hop context); oversmoothing risk (representations converge → segment differences lost); GAT attention weights vs basic GNN equal aggregation.
+- **Next session:** Stage 3 code — `code/stage3_gat_risk_model/train.py`. Inputs: `segments.gpkg`, `crashes_segmented.csv`, `graph_edges.csv` from Stage 2.
+- Notable: user understands the architecture well enough to write and reason about the code. Math internalization ongoing (more videos/reading independently).
+- Page: [[wiki/progress/2026-06-26]]
+
 ## [2026-06-25] ⏸ CHECKPOINT — Stage 2 complete. Ready for Stage 3.
 - **State: Stage 2 ran successfully. All three outputs produced. Ready for Stage 3 (GAT risk model).**
 - **What got done today:** walkthrough of `segment.py` section by section + `data_viewer.ipynb` map cell; two bugs fixed before running (wrong OS Roads path, missing `Data/` subdirectory; wrong column rename keys — `id` not `identifier`, `road_classification` not `roadClassification`); AADF sjoin dedup fix (+553 duplicate rows from equidistant count points); `low_memory=False` to suppress DtypeWarning; timing/progress prints added throughout.

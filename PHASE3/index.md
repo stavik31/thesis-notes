@@ -86,7 +86,7 @@ System design and stage-by-stage implementation guides (output of 2026-06-23 sys
 
 | Page | Date | Summary |
 |------|------|---------|
-| *(none yet)* | | |
+| [[wiki/progress/2026-06-26]] | 2026-06-26 | GAT teaching session — message passing, weight matrices, type-conditioned attention, oversmoothing; Stage 3 code starts tomorrow |
 
 ---
 
