@@ -6,6 +6,15 @@ Parse with: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-06-29] ⏸ CHECKPOINT — Stages 3–5 code complete. One known bug in Stage 5 deferred to next session.
+- **State: Stage 3 plots done. Stage 4 run + results analysed. Stage 5 code written but has a routing bug — fix identified, not yet applied.**
+- **Stage 3 extras:** `make_plots.py` written — 6 presentation plots: loss curve with generalisation gap + gold stars for new best val epochs; KDE risk distributions (all 5 types, log scale); 5×5 Pearson correlation matrix; national hotspot map (top 0.5%); zero-exposure rates bar chart; risk stats (median/mean/p95) per type.
+- **Stage 4 run + results:** `filter_and_clq.py` walked through section by section and run. 99th-percentile cap + 85th-percentile threshold applied per type. CLQ results: all 10 vehicle-type pairs show strong co-location (CLQ 3.5–6.1, p=1.0000 against divergence). 248,503 segments = hotspots for ALL 5 types (universal dangerous infrastructure). 296,730 segments = hotspots for exactly 1 type (type-specific risk layer). Thesis interpretation: most danger is infrastructure-level and shared, but each type has a distinct risk layer on top — route divergence comes from magnitude differences + unique hotspot segments.
+- **Stage 5 code written:** `code/stage5_routing/route.py`. Segment-adjacency graph (dual graph — nodes = segment IDs, not junctions). One vehicle type per run (`--type car`). Yen's k-shortest paths via `nx.shortest_simple_paths`. MCDM/AHP ranking (40% time, 40% risk, 20% hotspots). Each rank = separate toggleable Folium layer. OSM tiles background (no segment geometry loaded nationally).
+- **Stage 5 known bug — MUST FIX NEXT SESSION:** All k routes appear nearly identical (risk difference ≈ 0.01–0.02). Root cause: `risk_surface_filtered.csv` zeroes out 85% of segments (below 85th-percentile threshold), so edge weights collapse to pure travel time for most of the network. Yen's finds k near-identical travel-time paths. Fix: load `risk_scores.csv` (raw GAT output) for edge weights instead. Hotspot flag (map overlay) still comes from filtered surface. This is a two-line change — deferred at user's request.
+- Notable: `graph_edges.csv` is segment-to-segment adjacency (not node-to-node) — graph is the dual of the road network.
+- Page: [[wiki/progress/2026-06-29]]
+
 ## [2026-06-26] ⏸ CHECKPOINT — GAT teaching session complete. Stage 3 code starts tomorrow.
 - **State: Stage 2 complete. GAT concepts understood. Ready to write Stage 3 code next session.**
 - **What got done today:** teaching session on GNNs and GATs — no code written. Covered: message passing + weight matrices (confirmed user's baseline was correct); node embeddings vs vehicle-type embedding table (lookup mode selector); why type embedding goes before attention (so α_ij is type-conditioned); why crash counts + embedding are both needed (evidence vs query); layer stacking rationale (2-hop context); oversmoothing risk (representations converge → segment differences lost); GAT attention weights vs basic GNN equal aggregation.

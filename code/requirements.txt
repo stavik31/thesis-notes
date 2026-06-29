@@ -5,3 +5,4 @@ networkx
 pyogrio
 folium
 mapclassify
+tqdm

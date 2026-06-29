@@ -101,4 +101,4 @@ System design and stage-by-stage implementation guides (output of 2026-06-23 sys
 
 ---
 
-*Last updated: 2026-06-24 | **BUILD PHASE BEGINS.** Positioning-memo revamped (build design + validated niche baked in). wiki/overview.md written. All open decisions resolved except DfT AADF per-type (check in Stage 2). Next: Stage 1 — data prep.*
+*Last updated: 2026-06-29 | **Stages 1–5 code complete.** Stage 5 has one known bug (routing on filtered surface → identical routes); fix identified (swap to risk_scores.csv), apply next session. Next: fix Stage 5 bug → run Stage 5 → Stage 6 evaluation.*
