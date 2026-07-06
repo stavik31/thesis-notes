@@ -70,7 +70,15 @@ def load_road_network():
     links["segment_id"] = links["segment_id"].astype(str)
     links["start_node"] = links["start_node"].astype(str)
     links["end_node"]   = links["end_node"].astype(str)
-    return links[["segment_id", "road_class", "length_m", "start_node", "end_node", "geometry"]]
+
+    # road_function / form_of_way / trunk_road are intrinsic OS properties of the
+    # segment (road purpose, carriageway form incl. Roundabout, strategic-network
+    # flag). They cost nothing to keep here — the layer is already open — and
+    # carrying them makes segments.gpkg the single source of truth for everything
+    # about a segment, so downstream explainability/analysis code reads one clean
+    # table instead of re-opening and re-joining the 3.96M-row raw OS file.
+    return links[["segment_id", "road_class", "length_m", "start_node", "end_node",
+                  "road_function", "form_of_way", "trunk_road", "geometry"]]
 
 
 def build_graph_edges(links):
@@ -204,6 +212,18 @@ def assemble_segment_table(links, aadf_joined):
     wgs_centroids = segments.geometry.centroid.to_crs(CRS_WGS)
     segments["centroid_lon"] = wgs_centroids.x
     segments["centroid_lat"] = wgs_centroids.y
+
+    # Junction degree: how many road links meet at a node (1 = dead-end,
+    # 2 = simple through-link, 3 = T-junction, 4+ = complex junction). Each
+    # segment's complexity = the higher arm-count of its two end nodes. This
+    # needs a whole-network count over every node, so we materialise it once here
+    # rather than have each downstream analysis recompute the global aggregate.
+    # Stored raw; downstream code bins it (1 / 2 / 3 / 4+) as it sees fit.
+    node_deg = pd.concat([links["start_node"], links["end_node"]]).value_counts()
+    start_deg = segments["start_node"].map(node_deg).fillna(0)
+    end_deg   = segments["end_node"].map(node_deg).fillna(0)
+    segments["junction_degree"] = pd.concat([start_deg, end_deg], axis=1).max(axis=1).astype(int)
+
     _done(t, f"  {len(segments):,} segments")
     return segments
 

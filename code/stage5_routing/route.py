@@ -180,19 +180,27 @@ def load_adjacency(bbox_ids):
 
 def load_risk(bbox_ids, types):
     """
-    Loads risk_surface_filtered.csv for the bbox segments and requested types.
+    Loads risk scores and hotspot flags for the bbox segments and requested types.
+
+    Edge weights come from risk_scores.csv (raw GAT output — continuous surface).
+    Hotspot flags come from risk_surface_filtered.csv (85th-pct threshold — map overlay only).
+
     Returns dict: {segment_id: {type: risk_score, type+'_hot': bool}}
     """
     print('  Loading risk scores...', flush=True)
     t0 = time.time()
-    df = pd.read_csv(OUTPUTS / 'risk_surface_filtered.csv')
 
-    # Only keep rows for segments in the bbox and the vehicle types being routed.
-    # The full file has 19.8M rows; this filters it down to at most bbox_size × len(types).
-    df = df[df['segment_id'].isin(bbox_ids) & df['vehicle_type'].isin(types)]
+    scores = pd.read_csv(OUTPUTS / 'risk_scores.csv',
+                         usecols=['segment_id', 'vehicle_type', 'risk_score'])
+    scores = scores[scores['segment_id'].isin(bbox_ids) & scores['vehicle_type'].isin(types)]
 
-    # Reshape from long (one row per segment×type) into a nested dict for O(1) lookup
-    # during graph building.  risk[sid]['car'] = risk score; risk[sid]['car_hot'] = bool.
+    hotspots = pd.read_csv(OUTPUTS / 'risk_surface_filtered.csv',
+                           usecols=['segment_id', 'vehicle_type', 'is_hotspot'])
+    hotspots = hotspots[hotspots['segment_id'].isin(bbox_ids) & hotspots['vehicle_type'].isin(types)]
+
+    df = scores.merge(hotspots, on=['segment_id', 'vehicle_type'], how='left')
+    df['is_hotspot'] = df['is_hotspot'].fillna(0).astype(bool)
+
     risk = {}
     for row in df.itertuples(index=False):
         sid = row.segment_id

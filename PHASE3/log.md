@@ -4,7 +4,126 @@ Append-only chronological record for the active phase. One entry per operation.
 Phase 1's log: `../PHASE1/log.md`. Phase 2's log: `../PHASE2/log.md`.
 Parse with: `grep "^## \[" log.md | tail -10`
 
+## [2026-07-06] ⏸ CHECKPOINT — end of day. Stage 2 enriched + re-run; Stage 3 rewrite STARTED (in progress). Read this first next session.
+- **State:** engine decision finalized + validated leakage-free (see the progress entry below). **Stage 2 was enriched and re-run** — `segments.gpkg` now carries `road_function`, `form_of_way`, `trunk_road`, `junction_degree` (for the explainability layer; the engine doesn't use them). **Stage 3 `train.py` rewrite is IN PROGRESS** — replacing the GAT with the cluster+share+XGBoost engine, section by section, with the user following each part to understand it.
+- **`train.py` progress so far:** Section 1 (docstring + imports + constants — HISTORY/TARGET/HOLDOUT windows, MIN_CRASHES=30, AADF_COL, CITIES, SEG_COLS) and Section 2 (`load_data`, with `--city` filtering) are written. A `# BUILD-MARKER: next section below` comment marks where the next section goes.
+- **▶ RESUME HERE: the next section is CRASH AGGREGATION (`severity_matrix`)** — build the severity-weighted `[N segments × 5 types]` array from crashes, called twice (HISTORY_YEARS → clustering/features, TARGET_YEARS → target; disjoint = the leakage guard). It was drafted + explained this session but deliberately **not** committed to the file yet (user paused for the day). Then, in order: (4) adjacency + per-type BFS clustering, (5) cluster aggregates + share target, (6) per-type features, (7) 5 fully separate XGBoost models, (8) `risk_scores.csv` output + `main()`.
+- **`train.py` is mid-rewrite and NOT runnable** — expected; don't run Stage 3 until the rewrite is complete.
+- **Port from:** `code/tests/cluster_risk/{common,run_xgb}.py` (validated reference). Full spec + test→main-file mapping: [[wiki/build/stage-3-cluster-share-engine]].
+- Page: [[wiki/progress/2026-07-06]]
+
+## [2026-07-06] progress | Engine rebuilt + validated LEAKAGE-FREE; decision finalized; explainability + Stage-3 rewrite blueprint
+- Page: [[wiki/progress/2026-07-06]]
+- Pages created: [[wiki/build/stage-3-cluster-share-engine]] (the implementation blueprint for the Stage 3 rewrite)
+- Decisions extracted: [[wiki/concepts/vehicle-type-risk-divergence]] (2026-07-06 RESOLUTION section),
+  [[PHASE3/positioning-memo]] (engine FINALIZED row + status), [[wiki/overview]] (Stage 3/4/5/6 status + next steps)
+- Notable: the 2026-07-04 "validated" result had been run ad hoc and its code was **lost** (verified) —
+  rebuilt as durable scripts in `code/tests/cluster_risk/`, reproduced exactly (national eval 158,237),
+  then validated properly with **16-fold spatial CV + an unseen-2024 temporal holdout**: national
+  out-of-sample cross-type ρ=−0.097 and **validity on the never-seen 2024 ≈ validity on target years =
+  NO LEAKAGE** (answers the "too good?" worry — ρ≈0 is the noise floor, validity ~0.05–0.18 is the
+  honest, modest, sufficient bar). **Method decision FINAL: per-type discrete network clustering +
+  share-of-all-type-total target + 5 separate XGBoost models; GAT tested on the same recipe ties
+  divergence but loses validity/simplicity → retired.** 07-04 open items closed: λ-too-weak hypothesis
+  **refuted** (pair-9 is correct behaviour); GAT-vs-XGBoost done. Added two explainability layers (model
+  SHAP + descriptive per-type road-attribute over-representation, e.g. HGV↔motorway 4.8×, cycle↔roundabout
+  1.4×) and a working per-route explainer (London cycle route −65% risk for +0.2 min). Nothing folded into
+  the main pipeline yet — the blueprint [[wiki/build/stage-3-cluster-share-engine]] maps every test script
+  to its target main file for the guided rewrite next.
+
+## [2026-07-04] progress | Routing-divergence gap pairs diagnosed; GAT-with-cluster-recipe queued as top next step
+- Page: [[wiki/progress/2026-07-04-clustering-testing]] (updated, same-session addendum)
+- Notable: diagnosed the 2 non-diverging O-D pairs from the end-to-end routing test. Pair 1 (1/5
+  distinct paths) is a genuine geographic dead-end — top-5 pure-travel-time alternatives overlap
+  at Jaccard=0.99, essentially one corridor exists regardless of risk weighting; not a prediction
+  problem. Pair 9 (2/5 distinct) is more nuanced — a real, cheap alternative route exists (0.01
+  overlap, +17.8% travel time), hgv/motorcycle correctly stay put (their own risk there is already
+  low), but car (risk=0.70 on this corridor) also didn't move despite the cheap alternative —
+  car's risk on that alternative wasn't checked yet, so this is either correct (alternative is
+  equally risky for car) or a sign λ=1.0 is too weak to overcome a 17.8% time cost. **Next-session
+  priorities reordered: (1) test GAT using the exact same validated recipe (discrete network
+  clusters + share objective + fully separate models) for direct comparison against XGBoost, run
+  the same way (spatial holdout + routing test); (2) resolve the pair-9 car/λ question.**
+
+## [2026-07-04] progress | Clustering direction built and tested end-to-end — feature-based mechanism falsified, location-based mechanism validated
+- Page: [[wiki/progress/2026-07-04-clustering-testing]]
+- Decisions extracted: [[wiki/concepts/vehicle-type-risk-divergence]] (major update — mechanism
+  extended: divergence lives in location, not volume; feature-based clustering falsified),
+  [[PHASE3/positioning-memo]] (build architecture row updated), [[wiki/overview]] (Stage 3 status
+  + next steps updated)
+- Notable: built and tested the 2026-07-04 supervisor-meeting clustering plan in full. Its literal
+  mechanism (cluster by road_class + own-AADF + length, feature similarity) **fails** — ρ≈0.65-0.9,
+  no better than the original collapsed GAT — because car/lgv/hgv's own-AADF values are themselves
+  correlated with each other in reality (busy roads are busy for everyone), so feature-similarity
+  pooling re-collapses divergence even with genuinely type-specific inputs. **What works instead:
+  discrete network/location-based clusters (BFS-grown per type until a minimum crash count) +
+  predicting each type's SHARE of the cluster's all-type crash total (not raw count/rate) + fully
+  separate per-type XGBoost models — no shared parameters, no shared clustering key.** Validated
+  three ways: (1) genuine spatial-block holdout — an entire city (Manchester, 74,783 segments)
+  completely excluded from training — ρ=0.201, beats best-GAT's 0.377; (2) a new "does predicted
+  risk correlate with real future crashes" validity check (run for the first time in the whole
+  investigation) — XGBoost beat the pure statistic for every single vehicle type; (3) an actual
+  end-to-end routing test on a second held-out city (London) — mean 3.10/5 vehicle types take
+  genuinely distinct routes for the same trip, vs. 2.00/5 for best-GAT and 1.00/5 with no risk
+  weighting. Several methodological mistakes were made and corrected during the session (an early
+  temporal leak, a circular cluster-construction issue, a random instead of spatial holdout split)
+  — full audit trail, including what NOT to repeat, is in the progress note. Two open items from
+  the original plan (routing-search grouping split, "zoom in" semantics) remain unresolved; new
+  open items added (2 non-diverging routing pairs need diagnosis; GAT not yet tested with this
+  recipe; validity check not yet run on other methods). Nothing from tonight is committed to the
+  codebase — all tested ad hoc per explicit instruction.
+
+## [2026-07-04] progress | Supervisor meeting — 2026-07-03 fork reframed into per-type clustering direction
+- Page: [[wiki/progress/2026-07-04]]
+- Decisions extracted: [[wiki/concepts/vehicle-type-risk-divergence]] (fork section updated —
+  superseded, not resolved), [[PHASE3/positioning-memo]] (build architecture row updated)
+- Notable: supervisor didn't pick statistical-vs-GAT-stacked directly — reframed root cause as
+  sparsity at raw segment resolution (96–99.8% zero-crash segments/type) and steered toward
+  per-type clustering (5 independent clusterings, own AADF, never shared) to pool enough data,
+  with the statistical-vs-model choice re-tested at cluster level via the same ρ/Jaccard/CLQ gate.
+  Full 8-step plan drafted: `/home/vik-esoc/Desktop/thesis/new-direction-plan-2026-07-04.md`
+  (draft, not finalized). Two sub-questions (routing-search grouping split; "zoom in" semantics)
+  remain genuinely open, not supervisor-confirmed despite being stated as defaults in the plan.
+
+## [2026-07-03] progress | Full type-collapse investigation; EB shrinkage beaten; Task B killed; strategic fork
+- Page: [[wiki/progress/2026-07-03]]
+- Decisions extracted: [[wiki/concepts/vehicle-type-risk-divergence]] (major update — general
+  mechanism confirmed across 4 settings, EB-shrinkage correction, stacked-GAT fix documented)
+- Corrected: 2026-07-02's claim that EB shrinkage is a "safe secondary denoiser" — it isn't,
+  same collapse mechanism as everything else, tested and beaten by ad hoc statistical smoothing
+- Notable: 13 tests run. Architecture decoupling alone barely helps (0.894→0.785 even at full
+  separation). Fix that worked: share-target objective + per-type output heads together
+  (ρ=0.377, synergistic, **zero new input data**). General mechanism found and confirmed 4x:
+  any type-agnostic/shared signal (GAT backbone, generic STATS19 feature, EB's covariate prior)
+  collapses divergence; type-specific packaging of the *same* info fixes it. "Richer inputs"
+  hypothesis for ML directly refuted (clean OS geometry features flat for both GAT and XGBoost).
+  Task B (conditional risk by weather/light) premise-killed (Cramér's V 0.03-0.05, negligible).
+  Open fork: ad hoc statistical smoothing still beats every model (~0.19-0.25 vs 0.377) but is
+  unformalized/uncited (likely Network KDE, unverified) — logged for 2026-07-04 supervisor
+  meeting in `/home/vik-esoc/Desktop/thesis/supervisor-notes-2026-07-03.md`.
+
+## [2026-07-02] progress | Stage 3 retrain + full routing/divergence diagnostic chain
+- Page: [[wiki/progress/2026-07-02]]
+- Decisions extracted: [[wiki/concepts/vehicle-type-risk-divergence]] (new, ★ core),
+  [[wiki/concepts/routing-risk-normalization]] (new)
+- Corrected: [[wiki/progress/2026-06-30]] — "Stage 5 bug fixed" was necessary but insufficient
+- Challenged: positioning-memo "Unified GAT" locked decision → under revision (type-collapse)
+- Notable: **THE finding — GAT type-collapse.** Ground-truth per-type crash surfaces are
+  near-orthogonal (ρ≈−0.05, 4% hotspot overlap, survives denoising = niche CONFIRMED), but the
+  unified GAT smooths them to ρ=0.855. Ladder diagnostic: spatial smoothing saturates at ρ≈0.25,
+  so the collapse is architecture (shared backbone / weak conditioning), not message passing or
+  sparsity. Fix = decouple types (Stage 3). Routing sub-findings: capping is the lever, per-type
+  norm > global, λ≈2; divergence real but modest (parallel-street swaps) on current surface;
+  exposure-confound refuted (pred drives divergence, not the denominator).
+
 ---
+
+## [2026-06-30] ⏸ CHECKPOINT — Stage 5 bug fixed and confirmed working. Bbox limitation documented. Stage 6 next.
+- **State: Stages 1–5 complete and working. Stage 6 evaluation starts next session.**
+- **Stage 5 bug fixed:** `load_risk()` was loading `risk_surface_filtered.csv` as edge weights — 85% of segments zeroed out → routes collapsed to pure travel time. Fixed by loading `risk_scores.csv` (raw GAT output) for edge weights and `risk_surface_filtered.csv` for hotspot flags only. Re-run confirmed: routes now differentiate on risk (rank 1 vs rank 2 = 32% risk difference on test London O-D pair).
+- **Bbox limitation surfaced:** routing clips to a bbox around the O-D pair for performance. Routes outside the rectangle are never considered — real usability limitation for production. **Decision: stays in, documented as prototype limitation.** Thesis evaluation compares vehicle-type routes within the same bbox → divergence result is still valid. Production fix (contraction hierarchies) is out of scope; standard in research prototypes.
+- **Next:** Stage 6 evaluation.
+- Page: [[wiki/progress/2026-06-30]]
 
 ## [2026-06-29] ⏸ CHECKPOINT — Stages 3–5 code complete. One known bug in Stage 5 deferred to next session.
 - **State: Stage 3 plots done. Stage 4 run + results analysed. Stage 5 code written but has a routing bug — fix identified, not yet applied.**

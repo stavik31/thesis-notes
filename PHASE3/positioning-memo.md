@@ -2,8 +2,8 @@
 title: "Phase 3 Positioning Memo — Risk-Aware Routing with a Vehicle-Type Niche (LIVING)"
 type: memo
 date: "2026-06-17"
-last_updated: "2026-06-24"
-status: BUILD PHASE — reading closed 2026-06-22; build design locked 2026-06-23; building from 2026-06-24
+last_updated: "2026-07-04"
+status: BUILD PHASE — reading closed 2026-06-22; build design locked 2026-06-23; building from 2026-06-24; Stage 3 engine under revision 2026-07-03, redirected to per-type clustering 2026-07-04, ENGINE FINALIZED + VALIDATED LEAKAGE-FREE 2026-07-06 (cluster+share+XGBoost)
 tags: [phase3, positioning, thesis-core, route-planning, decision]
 ---
 
@@ -61,10 +61,14 @@ STATS19 → [ RISK LAYER: per-vehicle-type crash-risk surface ]  = DISTINCTIVE D
 
 **The premise concern is JUSTIFICATION, not novelty.** The vehicle-type direction must pay off: if
 motorcycle hotspots and HGV hotspots are the same places, type-aware routing produces the same
-routes as aggregate routing → null result. This has now been confirmed: the STATS19 probe (2026-06-22)
-shows motorcycle 72% urban vs HGV 61% rural, per-cell count correlation 0.24 (vs ~0.41 at random).
-The divergence is real at segment resolution. The open engineering risk is **HGV sparsity** (~80–91%
-of cells zero-HGV), not whether the effect exists.
+routes as aggregate routing → null result. This has now been confirmed **twice**: the informal
+STATS19 probe (2026-06-22, motorcycle 72% urban vs HGV 61% rural) and — much more strongly — the
+2026-07-02 model-grade probe: severity-weighted per-type crash surfaces are **near-orthogonal
+(cross-type Spearman ρ ≈ −0.047; top-1000 hotspot overlap 4%)** and the divergence **survives
+denoising** (pooling 5 years barely moves it). The divergence is real at segment resolution.
+The open risks are now (a) **HGV sparsity** (~80–91% zero-HGV cells) and (b) **the current GAT
+collapses this real divergence** into ρ=0.855 — a Stage-3 modelling problem, being fixed by
+decoupling types. See [[wiki/concepts/vehicle-type-risk-divergence]].
 
 ---
 
@@ -119,7 +123,7 @@ The full build design is in `wiki/build/`. Summary:
 |---|---|
 | 1 | Data prep — clean STATS19, join tables, severity-weight (fatal=3/serious=2/slight=1), tag by vehicle type |
 | 2 | Segmentation — OS Open Roads network; homogeneous segmentation (cut where road class/lanes/speed/AADF changes); map-match crashes; attach AADF |
-| 3 | **GAT risk model** — vehicle-type-conditioned attention; single unified model; per-type dispersion check picks loss function |
+| 3 | **Risk model** — per-type discrete network clustering + share-of-all-type-total target + 5 fully separate XGBoost models (GAT retired; validated leakage-free 2026-07-06 — [[wiki/build/stage-3-cluster-share-engine]]) |
 | 4 | Risk surface filtering — threshold on GAT output; CLQ post-hoc for spatial divergence maps (not a production gate) |
 | 5 | Routing — Yen's k-shortest paths + MCDM ranking (AHP/PROMETHEE) per vehicle type; vehicle-type-conditioned edge weights |
 | 6 | Evaluation — precision@X% (Gao) + Sarraf metrics + counterfactual |
@@ -148,7 +152,7 @@ These were open during the reading phase and are now resolved.
 
 | Decision | Choice | Rationale |
 |---|---|---|
-| Separate models per type vs unified | **Unified GAT with type embeddings** | Sparse types (HGV) borrow strength from dense types through shared backbone; preserves cross-type spatial relationships |
+| Separate models per type vs unified | ✅ **FINALIZED 2026-07-06: per-type discrete network clustering + share-of-all-type-total target + 5 fully separate XGBoost models. GAT retired.** | The unified GAT with type embeddings caused **type-collapse** (ρ 0.855). Long investigation (07-03/07-04): any signal shared across types collapses divergence, and divergence lives in *location* not volume, so feature-based clustering also fails; the fix pools by network location + predicts each type's *share* + shares nothing across types. **2026-07-06: the ad-hoc 07-04 result (whose code was lost) was rebuilt as durable scripts, reproduced (national eval 158,237 = exact), then validated leakage-free** — 16-fold spatial CV + unseen-2024 temporal holdout give national OOS ρ=−0.097 with **no leakage** (2024 validity ≈ target-year). GAT tested on the *same* recipe: ties divergence, **loses on validity** (negative for some types), simplicity, and explainability → retired to a documented alternative (its only edge = routing into zero-history regions). Honest framing: ρ≈0 is the noise floor; validity (~0.05–0.18, positive everywhere, ≈ statistical baseline) is the real, modest, sufficient measure. **Implementation blueprint: [[wiki/build/stage-3-cluster-share-engine]].** Full detail: [[wiki/progress/2026-07-06]], [[wiki/concepts/vehicle-type-risk-divergence]]. |
 | Significance gate (production) | **ML threshold on GAT output** | GAT already does spatial smoothing through message passing; a separate statistical test is redundant overhead |
 | CLQ role | **Post-hoc analysis only** | Generates spatial divergence maps for the results section; confirms where hotspots diverge by type |
 | Per-type loss function | **Per-type dispersion check in Stage 3** — do not assume | Per-type slices can flip the count regime: motorcycle = under-dispersed (CMP/HTCMP; Pathivada 2025); aggregate = over-dispersed (NB/ZITD; Gao 2024) |

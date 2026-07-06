@@ -59,7 +59,8 @@ System design and stage-by-stage implementation guides (output of 2026-06-23 sys
 | [[wiki/build/system-overview]] | Full pipeline overview — two halves, 6 stages, data sources, AI architecture, key design decisions |
 | [[wiki/build/stage-1-data-prep]] | Clean and join STATS19 tables into a single crash-level table |
 | [[wiki/build/stage-2-segmentation]] | Segment OS Open Roads network; map-match crashes; attach AADF traffic counts |
-| [[wiki/build/stage-3-gat-risk-model]] | Train GAT with vehicle-type-conditioned attention; output risk score per (segment, type) |
+| [[wiki/build/stage-3-cluster-share-engine]] | **★ FINAL Stage 3 engine + rewrite blueprint (2026-07-06).** Per-type discrete network clustering + share target + 5 separate XGBoost; validated leakage-free; test→main-file mapping, leakage guards, explainability layers |
+| [[wiki/build/stage-3-gat-risk-model]] | *(superseded)* the GAT design where type-collapse happened — audit trail |
 | [[wiki/build/stage-4-risk-surface-filtering]] | Threshold GAT output; CLQ post-hoc divergence maps |
 | [[wiki/build/stage-5-routing]] | Yen's k-shortest paths + MCDM ranking (AHP/PROMETHEE) per vehicle type |
 | [[wiki/build/stage-6-evaluation]] | Risk model precision@X%; routing counterfactual + Sarraf metrics; divergence test |
@@ -70,7 +71,8 @@ System design and stage-by-stage implementation guides (output of 2026-06-23 sys
 
 | Page | Description |
 |------|-------------|
-| *(none yet)* | |
+| [[wiki/concepts/vehicle-type-risk-divergence]] | **★ CORE.** Ground-truth per-type crash surfaces are near-orthogonal (ρ≈0, 4% hotspot overlap; survives denoising) — niche confirmed. But the unified GAT collapses it to ρ=0.855 (type-collapse). Ladder diagnostic pins cause to architecture, not message passing/sparsity. Fix = decouple types. #thesis-core #decision |
+| [[wiki/concepts/routing-risk-normalization]] | How Stage-3 risk becomes a Stage-5 edge weight (cap × norm-scope × λ). Why the naive version gave identical routes for every type; capping is the lever; per-type vs global norm; λ≈2. #thesis-core #decision |
 
 ---
 
@@ -86,6 +88,12 @@ System design and stage-by-stage implementation guides (output of 2026-06-23 sys
 
 | Page | Date | Summary |
 |------|------|---------|
+| [[wiki/progress/2026-07-06]] | 2026-07-06 | **★ Engine rebuilt (lost 07-04 code), validated LEAKAGE-FREE (16-fold spatial CV + unseen-2024 temporal holdout → national OOS ρ=−0.097, 2024 validity ≈ target-year = no leakage), decision FINALIZED (XGBoost cluster+share; GAT retired), 2 explainability layers + per-route explainer added. Produced the Stage 3 rewrite blueprint. All in `code/tests/cluster_risk/`** |
+| [[wiki/progress/2026-07-04-clustering-testing]] | 2026-07-04 | **Clustering direction built and tested end-to-end.** Plan's literal feature-based clustering FAILS (ρ≈0.65-0.9, no better than original GAT) — car/lgv/hgv own-AADF correlate with each other. What works: discrete network/location-based clusters + share-of-all-type-total objective + fully separate per-type XGBoost. Validated on spatial holdout (ρ=0.201, beats best-GAT 0.377) and end-to-end routing test (3.10/5 distinct routes vs. GAT's 2.00/5). Mistakes made and corrected logged in full |
+| [[wiki/progress/2026-07-04]] | 2026-07-04 | Supervisor meeting: 2026-07-03 statistical-vs-GAT-stacked fork reframed, not answered directly. New direction — per-type clustering to fix raw sparsity, statistical-vs-model decided at cluster level via same evaluation gate. Plan drafted (`new-direction-plan-2026-07-04.md`), two sub-questions on routing-search grouping still open |
+| [[wiki/progress/2026-07-03]] | 2026-07-03 | Full type-collapse investigation: architecture ladder, feature leak caught+fixed, type-specific-vs-agnostic mechanism confirmed 4x, best GAT (share-target+per-head, no new data) reaches ρ=0.377, EB shrinkage tested and beaten by ad hoc statistical smoothing, Task B (conditional risk) killed. Strategic fork logged for supervisor |
+| [[wiki/progress/2026-07-02]] | 2026-07-02 | Stage 3 retrained (fixed); routes were identical across types — real cause was uncapped per-type norm over an exposure-artifact max. Phase A factorial: capping is the lever, per-type norm > global, λ≈2. Divergence real but modest |
+| [[wiki/progress/2026-06-30]] | 2026-06-30 | Stage 5 bug fixed (risk_scores.csv swap) — **⚠ corrected 2026-07-02: necessary but insufficient**; bbox limitation surfaced and documented |
 | [[wiki/progress/2026-06-26]] | 2026-06-26 | GAT teaching session — message passing, weight matrices, type-conditioned attention, oversmoothing; Stage 3 code starts tomorrow |
 
 ---
@@ -101,4 +109,4 @@ System design and stage-by-stage implementation guides (output of 2026-06-23 sys
 
 ---
 
-*Last updated: 2026-06-29 | **Stages 1–5 code complete.** Stage 5 has one known bug (routing on filtered surface → identical routes); fix identified (swap to risk_scores.csv), apply next session. Next: fix Stage 5 bug → run Stage 5 → Stage 6 evaluation.*
+*Last updated: 2026-07-06 | **Stage 3 engine FINALIZED + validated leakage-free (XGBoost cluster+share); GAT retired; rewrite blueprint written ([[wiki/build/stage-3-cluster-share-engine]]); next = fold into main pipeline.** Earlier note below retained for history. | 2026-07-04 (night testing): **Clustering direction built and tested — its literal mechanism failed, a different one works.** The plan's feature-based clustering (road_class+AADF+length) never beat ρ≈0.65, no better than the original collapsed GAT. What actually works: discrete network/location-based clusters (not feature-based) + share-of-all-type-total objective + fully separate per-type XGBoost models — validated on a genuine spatial holdout (whole city excluded from training: ρ=0.201, beats best-GAT's 0.377) and an actual end-to-end routing test (3.10/5 types take distinct routes, vs. GAT's 2.00/5). Nothing yet committed to the codebase (all tested ad hoc). Two sub-questions from the original plan (routing-search grouping split, "zoom in" semantics) still open, plus new open items (check 2 non-diverging routing pairs; test GAT with the new recipe; validity-check other methods). See [[wiki/concepts/vehicle-type-risk-divergence]] and [[wiki/progress/2026-07-04-clustering-testing]].*

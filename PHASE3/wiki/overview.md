@@ -1,7 +1,7 @@
 ---
 title: "Thesis Overview — Phase 3"
 type: overview
-last_updated: "2026-06-24"
+last_updated: "2026-07-06"
 tags: [phase3, thesis-core, overview]
 ---
 
@@ -55,16 +55,16 @@ assembling a full pipeline that exploits it.
 - Niche premise is demonstrated (not assumed): Lee 2018 + STATS19 probe (see above).
 - Build design locked: 6-stage pipeline with GAT + vehicle-type-conditioned attention as the AI core.
 
-**6-stage build (current status):**
+**6-stage build (current status — updated 2026-07-02):**
 
 | Stage | What | Status |
 |---|---|---|
-| 1 | Data prep — clean STATS19, join tables, severity-weight, tag by vehicle type | **NEXT** |
-| 2 | Segmentation — OS Open Roads network; homogeneous segmentation; map-match crashes; attach AADF | not started |
-| 3 | GAT risk model — train with type-conditioned attention; output per-(segment, type) risk score | not started |
-| 4 | Risk surface filtering — threshold on GAT output; CLQ post-hoc divergence maps | not started |
-| 5 | Routing — Yen's k-shortest paths + MCDM ranking per vehicle type | not started |
-| 6 | Evaluation — Gao metrics (precision@X%) + Sarraf metrics + counterfactual divergence test | not started |
+| 1 | Data prep — clean STATS19, join tables, severity-weight, tag by vehicle type | **done** |
+| 2 | Segmentation — OS Open Roads network; homogeneous segmentation; map-match crashes; attach AADF | **done** (3.96M national segments) |
+| 3 | Risk model — **per-type discrete network clustering + share-target + 5 separate XGBoost models** | **✅ ENGINE DECIDED + VALIDATED LEAKAGE-FREE (2026-07-06).** Rebuilt as durable code (`code/tests/cluster_risk/`), reproduced 07-04 (national eval 158,237 = exact), then validated with 16-fold spatial CV + unseen-2024 temporal holdout: national OOS ρ=−0.097, **no leakage** (2024 validity ≈ target-year). GAT tested on same recipe → ties divergence, loses validity/simplicity → retired. **Not yet in the main pipeline** — blueprint ready: [[wiki/build/stage-3-cluster-share-engine]]. See [[wiki/progress/2026-07-06]], [[wiki/concepts/vehicle-type-risk-divergence]] |
+| 4 | Risk surface filtering — threshold + CLQ post-hoc divergence maps | **done** on old GAT surface; **re-run on new XGBoost surface pending** (same consumer contract). CLQ stays post-hoc |
+| 5 | Routing — Yen's k-shortest + MCDM per type; **+ per-route explainer** | **built; consumer unchanged.** Route on the full-history surface (holdout surface flattens divergence). Config: p99 cap + per-type norm + modest λ (λ is *not* a simple lever — see 07-06 pair-9 result). Per-route explanation added (`explain_route.py`) |
+| 6 | Evaluation — spatial CV + temporal-2024 validity + cross-type divergence + Sarraf metrics | **method built (`run_cv.py`)** — port as Stage 6; adds the "predicted-risk vs real-future-crashes" validity axis |
 
 Build files for each stage are in `wiki/build/`. Code lives in a separate repository.
 
@@ -74,12 +74,37 @@ Build files for each stage are in `wiki/build/`. Code lives in a separate reposi
 - All reading. Corpus is sufficient; further reads happen just-in-time during the build.
 - Full system design: architecture decisions locked, build files written.
 
-**What's next (immediate):**
-1. Stage 1: clone STATS19 tables, join on `accident_index`, severity-weight crashes
-   (fatal=3/serious=2/slight=1), tag each crash by vehicle type, establish temporal holdout
-   (years 1–4 training, year 5 holdout — never touched until Stage 6).
-2. Stage 2, first step: DfT AADF per-type availability check — does the count file resolve by
-   vehicle type at a usable spatial scale? Answer gates the exposure normalisation strategy.
+**What's next (immediate):** fold the validated engine into the main pipeline, guided by the
+blueprint [[wiki/build/stage-3-cluster-share-engine]]:
+1. **Rewrite `stage3_gat_risk_model/train.py`** — GAT → cluster + share + per-type XGBoost (port
+   `common.py` + `run_xgb.py`; keep data-loading + `risk_scores.csv` output contract).
+2. Point Stage 4 at the new surface (same columns); re-check thresholds; CLQ stays post-hoc.
+3. Route on the **full-history** surface; bake p99 cap + per-type norm + chosen λ into `route.py`;
+   add `explain_route.py` (per-route explanation) + `road_association.py` (descriptive layer).
+4. Port `run_cv.py` as Stage 6 (spatial CV + temporal-2024 validity + divergence).
+5. (Non-blocking) formalise/cite the network-clustering method; robustness sweep of
+   `min_crashes`/target; personalized attribute-avoidance routing (deferred future add-on).
+
+**Key result locked 2026-07-06:** the engine decision is **final and validated leakage-free.**
+Per-type discrete network clustering + share target + 5 separate XGBoost models: national
+out-of-sample cross-type ρ=−0.097 (16-fold spatial CV over all 3.96M segments), and validity on
+the **never-seen 2024** year ≈ validity on the target years → **no leakage** (directly answers the
+"too good?" worry). Honest read: ρ≈0 is the noise floor; validity (~0.05–0.18, positive everywhere)
+is the real, modest, defensible measure. GAT tested on the same recipe → ties divergence, loses on
+validity/simplicity → retired. Two explainability layers added (SHAP + descriptive road
+associations) and a working per-route explainer. See [[wiki/progress/2026-07-06]] and
+[[wiki/build/stage-3-cluster-share-engine]].
+
+**Key results locked 2026-07-03:** the vehicle-type niche is *strongly empirically confirmed* on
+STATS19 (per-type crash surfaces near-orthogonal, ρ≈-0.05, 4% hotspot overlap, survives
+denoising) — stronger evidence than Lee 2018. But every model tested (GAT variants, XGBoost
+variants, even proper Empirical Bayes shrinkage) underperforms a simple statistical smoothing
+estimate at preserving that divergence. Best model (GAT: share-target + per-type heads,
+**no new input data**) reaches ρ=0.377, real but partial. Mechanism fully diagnosed: any
+signal shared equally across types collapses divergence, regardless of method. A second ML
+angle (conditional risk by weather/light/time) was premise-tested and killed (Cramér's V
+0.03–0.05, negligible). See [[wiki/concepts/vehicle-type-risk-divergence]] and
+[[wiki/concepts/routing-risk-normalization]].
 
 ---
 

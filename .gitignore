@@ -21,3 +21,15 @@ code/map.html
 
 # Editor
 .vscode/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Test-folder generated artifacts (regenerable from the scripts; some are >1GB).
+# Keep the .py reference implementations, never the data they produce.
+code/tests/**/*.csv
+code/tests/**/*.json
+code/tests/**/*.log
+code/tests/**/*.png
+code/tests/**/*.html
