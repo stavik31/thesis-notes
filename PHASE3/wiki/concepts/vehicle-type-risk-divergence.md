@@ -2,8 +2,8 @@
 title: "Vehicle-Type Risk Divergence (and the GAT Type-Collapse Problem)"
 type: concept
 tags: [thesis-core, experiment, decision]
-sources: ["[[wiki/progress/2026-07-02]]", "[[wiki/progress/2026-07-03]]", "[[wiki/progress/2026-07-04]]", "[[wiki/progress/2026-07-04-clustering-testing]]", "[[wiki/progress/2026-07-06]]"]
-last_updated: "2026-07-06"
+sources: ["[[wiki/progress/2026-07-02]]", "[[wiki/progress/2026-07-03]]", "[[wiki/progress/2026-07-04]]", "[[wiki/progress/2026-07-04-clustering-testing]]", "[[wiki/progress/2026-07-06]]", "[[wiki/progress/2026-07-07]]"]
+last_updated: "2026-07-07"
 ---
 
 # Vehicle-Type Risk Divergence — and why every tested model hides it
@@ -28,6 +28,19 @@ surfaces give ≈0.05), so the real bar is **validity**, which is modest (~0.05�
 everywhere and comparable to the statistical baseline — *sufficient*, since the contribution is
 explainable per-type divergence, not accuracy. Full detail + the implementation blueprint:
 [[wiki/progress/2026-07-06]], [[wiki/build/stage-3-cluster-share-engine]].
+
+**2026-07-07 REFINEMENT — the divergence is a 3-GROUP structure, not uniform 5-way (⚠ softens
+the "near-orthogonal for all types" claim below).** A model-free **Colocation Quotient** (Leslie &
+Kronenfeld 2011; the statistic Lee 2018 & Hu 2018 used) on the raw 885k crash points, with a
+199× permutation test, certifies the premise but scopes it honestly: mean cross-type CLQ = **0.905**,
+14/20 ordered pairs significantly segregated (p<0.01), strongest **cycle↔hgv = 0.57–0.59**. BUT two
+within-group pairs **colocate**: **motorcycle↔cycle** (CLQ≈1.02–1.03, ns) and **lgv↔hgv** (≈1.19–1.20).
+So crashes segregate into **car / two-wheeler / freight** regimes — divergence is strong *across*
+groups, collapses *within*. This directly answers the Zhu-2025 "vehicle-group ≠ type" critique
+(report it as a *group*-level result). Separately, a **grouping-robustness battery** (3 clustering
+thresholds × 3 schemes incl. a type-blind grid) showed cross-type ρ stays ≈[−0.03,−0.08] regardless
+of the grouping ⇒ the divergence comes from the **share target**, not the partition (MAUP answered).
+Full numbers: [[wiki/progress/2026-07-07]]. *(Full integration into the sections below is pending.)*
 
 **2026-07-04 night-testing update, read this first:** the clustering direction from the
 supervisor meeting was built and tested. **Its literal mechanism (feature-based clustering — road

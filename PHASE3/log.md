@@ -4,7 +4,29 @@ Append-only chronological record for the active phase. One entry per operation.
 Phase 1's log: `../PHASE1/log.md`. Phase 2's log: `../PHASE2/log.md`.
 Parse with: `grep "^## \[" log.md | tail -10`
 
-## [2026-07-06] ⏸ CHECKPOINT — end of day. Stage 2 enriched + re-run; Stage 3 rewrite STARTED (in progress). Read this first next session.
+## [2026-07-07] ⏸ CHECKPOINT — end of day. Stage 3 rewrite at Section 5 (Sections 1–5 written). Read this first next session.
+- **State:** Stage 3 `train.py` rewrite continues (GAT → cluster+share+XGBoost engine), section by section with the user following each part to understand it. **Sections 1–5 are written** in `code/stage3_gat_risk_model/train.py`:
+  1. constants (HISTORY/TARGET/HOLDOUT windows, MIN_CRASHES=30, AADF_COL, CITIES, SEG_COLS)
+  2. `load_data` (+ `--city` filter)
+  3. `severity_matrix` — crash aggregation, called twice on disjoint years (leakage guard)
+  4. `build_adjacency` (CSR graph) + `bfs_clusters` (densest-first BFS clustering)
+  5. `cluster_frame` (per-cluster aggregates incl. `c_tgt_share_t` = the label) + `cluster_target_share` (broadcast label to segments)
+  A `# BUILD-MARKER: next section below` marks where Section 6 goes.
+- **▶ RESUME HERE:** the user has **not yet read the Section 5 code explanation** (`cluster_frame` + `cluster_target_share`). Re-present it (concept woven through the actual lines — the established teaching style) and **re-ask the pending check question**: *why compute the cluster's share as a ratio of summed counts (`g['hist_t']/g['hist_all']`) rather than averaging each segment's own share?* Then continue: **Section 6 — `road_class_onehot` + `build_type_features`** (per-segment feature matrix) → Section 7 (5 separate XGBoost models) → Section 8 (`risk_scores.csv` + `main()`).
+- **`train.py` is mid-rewrite and NOT runnable** yet.
+- **Also today (a tangent, fully recorded in [[wiki/progress/2026-07-07]]):** direction-justification test battery — grouping-robustness/MAUP (threshold + scheme sweeps → divergence is robust and comes from the SHARE TARGET) and **CLQ** premise certification (3-group structure: car / two-wheeler / freight; moto↔cycle & lgv↔hgv colocate). New scripts `sens_scheme.py`, `clq.py`. **To be re-run cleanly in Stage 6** — not part of the current rewrite.
+
+## [2026-07-07] experiment | Direction-justification battery: grouping robustness (MAUP) + CLQ premise certification
+- Page: [[wiki/progress/2026-07-07]]
+- Decisions/findings extracted: [[wiki/concepts/vehicle-type-risk-divergence]] (flagged: divergence is a 3-group structure, not uniform 5-way)
+- **Tests (ad-hoc, `code/tests/cluster_risk/`; to be re-run in Stage 6):**
+  - Threshold sensitivity (Manchester holdout, min_crashes 20/30/50): XGBoost cross-type ρ stable −0.03…−0.07; ML beats statistical validity at every threshold (3/5, 4/5, 5/5 types).
+  - Scheme sensitivity (national, `sens_scheme.py`: bfs_dense/bfs_random/grid): order irrelevant; a **type-blind grid still diverges (ρ=−0.05)** ⇒ divergence comes from the SHARE TARGET, not the clustering. MAUP answered.
+  - **CLQ** (`clq.py`, raw 885k crash points, 199× permutation): mean cross-type CLQ=0.905, most pairs significantly segregated (cycle↔hgv 0.57); **moto↔cycle and lgv↔hgv colocate** → 3-group (car/two-wheeler/freight) structure. Certifies premise, answers Zhu group-vs-type, softens "near-orthogonal" claim.
+- Also identified field-standard eval metrics for Stage 6 (Cheng-Washington consistency, crashes-captured@top-X%, HSM EB/PSI, CLQ, Sarraf Spearman/AO/DCG).
+- Notable: Stage 3 rewrite paused at Section 3/4 during this tangent; resuming the guided rewrite next.
+
+## [2026-07-06] ⏸ CHECKPOINT — (SUPERSEDED — see the 2026-07-07 checkpoint above) Stage 2 enriched + re-run; Stage 3 rewrite STARTED.
 - **State:** engine decision finalized + validated leakage-free (see the progress entry below). **Stage 2 was enriched and re-run** — `segments.gpkg` now carries `road_function`, `form_of_way`, `trunk_road`, `junction_degree` (for the explainability layer; the engine doesn't use them). **Stage 3 `train.py` rewrite is IN PROGRESS** — replacing the GAT with the cluster+share+XGBoost engine, section by section, with the user following each part to understand it.
 - **`train.py` progress so far:** Section 1 (docstring + imports + constants — HISTORY/TARGET/HOLDOUT windows, MIN_CRASHES=30, AADF_COL, CITIES, SEG_COLS) and Section 2 (`load_data`, with `--city` filtering) are written. A `# BUILD-MARKER: next section below` comment marks where the next section goes.
 - **▶ RESUME HERE: the next section is CRASH AGGREGATION (`severity_matrix`)** — build the severity-weighted `[N segments × 5 types]` array from crashes, called twice (HISTORY_YEARS → clustering/features, TARGET_YEARS → target; disjoint = the leakage guard). It was drafted + explained this session but deliberately **not** committed to the file yet (user paused for the day). Then, in order: (4) adjacency + per-type BFS clustering, (5) cluster aggregates + share target, (6) per-type features, (7) 5 fully separate XGBoost models, (8) `risk_scores.csv` output + `main()`.
