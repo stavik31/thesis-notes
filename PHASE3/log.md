@@ -4,6 +4,16 @@ Append-only chronological record for the active phase. One entry per operation.
 Phase 1's log: `../PHASE1/log.md`. Phase 2's log: `../PHASE2/log.md`.
 Parse with: `grep "^## \[" log.md | tail -10`
 
+## [2026-07-08] ⏸ CHECKPOINT — end of day. Stage 3 done + live; Stage 4 retired; Stage 5 planned. Read this first next session.
+- **State:** Stage 3 complete + **live** (logistic cluster+share surface in production `outputs/risk_scores.csv`; see the milestone entry below + [[wiki/progress/2026-07-08]]). **Stage 4 reviewed → retired/superseded:** routing reads Stage 3's surface directly (Stage 4 doesn't gate routing); its CLQ is done better in `clq.py`; its only remnant is a hotspot flag used for the map overlay. **Next: Stage 5 (routing).**
+- **▶ STAGE 5 PLAN (resume here) — `code/stage5_routing/route.py`:**
+  1. **Make `route.py` self-sufficient** — drop the `risk_surface_filtered.csv` (Stage-4) dependency in `load_risk`; compute hotspots on the fly (top-X% risk within the bbox, per type).
+  2. **Route all 5 types for one O-D and overlay them** — the divergence payoff figure. `main()` currently routes a single `--type`; the Folium map already supports one toggle-layer per type, so `main()` just needs to loop all five.
+  3. **Run on the new surface + set λ** — default `--lambda_risk`=0.5 is likely too low (2026-07-02 tuning suggested ~2); pick a λ where the ~3 route-families (car / two-wheeler / freight) appear. Test O-D in London or Manchester.
+  4. (minor) fix stale "raw GAT output" comment in `load_risk`.
+  - **Known constraint (document, not a bug):** routing is bbox-around-O-D only (Yen's on a national graph is intractable); city-scale trips are the intended use.
+- **Stage 5 → Stage 6 link:** `route.py` emits `routes.csv` (per-type, per-rank: dist, time, cumulative risk, hotspots) = the machine-readable input to Stage 6. Stage-6 *routing* eval aggregates it over many O-D pairs → (a) quantify route divergence (Sarraf Average-Overlap/DCG; % distinct; the ~3-group claim — `code/tests/cluster_risk/routing_test.py` is the prototype, ~3.1/5 distinct), (b) risk-reduction-vs-detour counterfactual (risk-aware vs shortest-time λ=0), (c) λ tuning. Separate from Stage-6 *risk-model* eval (validity / precision@top-X% / Cheng-Washington / CLQ via `run_cv.py` + `clq.py`).
+
 ## [2026-07-08] milestone | Stage 3 rewrite COMPLETE + live (logistic surface) + training plots
 - Page: [[wiki/progress/2026-07-08]]
 - Decisions extracted: objective `reg:squarederror` → `reg:logistic` (bounded [0,1] share output + correct proportion loss; verified metric-identical on Manchester holdout). Documented in the progress note + [[wiki/build/stage-3-cluster-share-engine]].
