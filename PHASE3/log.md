@@ -4,7 +4,15 @@ Append-only chronological record for the active phase. One entry per operation.
 Phase 1's log: `../PHASE1/log.md`. Phase 2's log: `../PHASE2/log.md`.
 Parse with: `grep "^## \[" log.md | tail -10`
 
-## [2026-07-07] ⏸ CHECKPOINT — end of day. Stage 3 rewrite at Section 5 (Sections 1–5 written). Read this first next session.
+## [2026-07-08] milestone | Stage 3 rewrite COMPLETE + live (logistic surface) + training plots
+- Page: [[wiki/progress/2026-07-08]]
+- Decisions extracted: objective `reg:squarederror` → `reg:logistic` (bounded [0,1] share output + correct proportion loss; verified metric-identical on Manchester holdout). Documented in the progress note + [[wiki/build/stage-3-cluster-share-engine]].
+- **Stage 3 finished** (train.py, 8 sections) and **run nationally** → `outputs/risk_scores.csv` = 19.8M rows, all risk in [0,1]. Output contract unchanged; Stage 4/5 consume as-is. **Live.**
+- New `make_plots.py` (replaces GAT plotter; GAT plots → `outputs/plots/_gat_archive/`): 5 training plots (risk distribution, per-type risk maps, feature importance, summary, cluster-size distribution). Verified visually.
+- Clarified: routing diverges into ~3 groups where hotspots sit on the path (not everywhere); richer Stage-2 features are for the separate explainability layer, not the model.
+- Notable: Stage 3 is done and live; next is re-examining Stage 4 (largely superseded) → Stage 5 routing re-run → Stage 6 eval.
+
+## [2026-07-07] ⏸ CHECKPOINT — (SUPERSEDED — Stage 3 now complete, see 2026-07-08 milestone above) Stage 3 rewrite at Section 5.
 - **State:** Stage 3 `train.py` rewrite continues (GAT → cluster+share+XGBoost engine), section by section with the user following each part to understand it. **Sections 1–5 are written** in `code/stage3_gat_risk_model/train.py`:
   1. constants (HISTORY/TARGET/HOLDOUT windows, MIN_CRASHES=30, AADF_COL, CITIES, SEG_COLS)
   2. `load_data` (+ `--city` filter)

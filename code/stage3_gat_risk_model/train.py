@@ -271,4 +271,159 @@ def cluster_target_share(cluster_id, cframe):
     return np.array([share_map.get(cid, 0.0) if cid >= 0 else 0.0
                      for cid in cluster_id], dtype=np.float32)
 
-# BUILD-MARKER: next section below
+# ── Per-segment features ────────────────────────────────────────────────────────
+
+def road_class_onehot(seg_df):
+    """One-hot encode road_class (A road, B road, Motorway, ...) into float columns.
+    Built once and shared by all five types — road class is type-independent."""
+    rc = pd.get_dummies(seg_df['road_class'], prefix='rc').astype(np.float32)
+    return rc.values, list(rc.columns)
+
+
+def build_type_features(seg_df, type_idx, cluster_id, cframe, rc_x, rc_cols):
+    """Feature matrix X [N, F] for one type. Each row mixes two kinds of signal:
+
+      SEGMENT-level (varies within a cluster): own-type AADF, length, all-traffic,
+        road-class dummies — these let the model separate two segments that sit in
+        the same cluster (and therefore share the same label y).
+      CLUSTER-level (constant within a cluster): this type's HISTORY cluster stats
+        (share, rate, size, counts), looked up from cframe by the segment's
+        cluster_id — the pooled local crash signal.
+
+    Every feature is history- or attribute-derived; nothing from the target years
+    enters here (the leakage guard, again).
+    """
+    tname = VEHICLE_TYPES[type_idx]
+    n = len(seg_df)
+
+    # segment-level magnitudes — heavily right-skewed, so log1p compresses them
+    own_aadf = seg_df[AADF_COL[tname]].fillna(0).values.astype(np.float32)
+    length   = seg_df['length_m'].values.astype(np.float32)
+    allmv    = seg_df['all_motor_vehicles'].fillna(0).values.astype(np.float32)
+
+    # cluster-level HISTORY stats, mapped from each segment's cluster (-1 -> 0)
+    cols = ['c_share_t', 'c_rate_t', 'c_size', 'c_hist_t', 'c_hist_all']
+    cmap = {c: cframe[c].to_dict() for c in cols}
+    cvals = np.zeros((n, len(cols)), dtype=np.float32)
+    for ci, c in enumerate(cols):
+        d = cmap[c]
+        cvals[:, ci] = [d.get(cid, 0.0) if cid >= 0 else 0.0 for cid in cluster_id]
+
+    feats = np.column_stack([
+        np.log1p(own_aadf), np.log1p(length), np.log1p(allmv), cvals, rc_x
+    ]).astype(np.float32)
+    names = ['log_own_aadf', 'log_length', 'log_allmv', *cols, *rc_cols]
+    return feats, names
+
+# ── Per-type training (one of five fully independent models) ────────────────────
+
+def fit_predict_type(seg_df, type_idx, hist_sev, target_sev,
+                     indptr, neighbors, rc_x, rc_cols, min_crashes, seed, gpu):
+    """Run the whole pipeline for ONE vehicle type and return its per-segment risk
+    scores [N]. This is one of FIVE fully independent models: it shares no clusters,
+    no features, and no learned parameters with the other four — only the read-only
+    inputs. That independence is the structural guarantee of per-type divergence
+    (the GAT collapsed types precisely because it shared parameters across them).
+
+    Deployment surface: train on ALL segments, predict ALL segments. (Holdout/CV
+    for honest generalisation testing lives in Stage 6, not here.)
+    """
+    # §4–6 for this type: cluster -> aggregate -> features + label
+    cluster_id = bfs_clusters(indptr, neighbors, hist_sev[:, type_idx], min_crashes)
+    cframe     = cluster_frame(cluster_id, hist_sev, target_sev, seg_df, type_idx)
+    X, names   = build_type_features(seg_df, type_idx, cluster_id, cframe, rc_x, rc_cols)
+    y          = cluster_target_share(cluster_id, cframe)
+
+    model = xgb.XGBRegressor(
+        n_estimators=400,          # many small trees...
+        learning_rate=0.05,        # ...taking small steps = robust, less overfit
+        max_depth=6,               # moderate interaction depth (enough, not memorising)
+        subsample=0.8,             # row subsampling per tree -> stochastic regularisation
+        colsample_bytree=0.8,      # column subsampling per tree -> same
+        min_child_weight=5,        # a leaf needs >=5 weight before splitting -> ignores
+                                   #   tiny noisy groups (important: crashes are sparse)
+        objective='reg:logistic',  # target is a SHARE in [0,1]: the sigmoid output keeps
+                                   #   predictions in (0,1) by construction, and
+                                   #   cross-entropy is the correct loss for a proportion.
+                                   #   Verified vs reg:squarederror on a Manchester holdout:
+                                   #   identical divergence (rho) + validity, valid range.
+        tree_method='hist',        # fast histogram split-finder (the log-binning of §6)
+        device='cuda' if gpu else 'cpu',
+        n_jobs=32, random_state=seed,
+    )
+    model.fit(X, y)
+    pred = model.predict(X).astype(np.float32)   # already in (0,1) via the logistic objective
+    importance = dict(zip(names, model.feature_importances_))   # for the plots hook
+    n_clusters = int(cluster_id.max() + 1)
+    return pred, importance, n_clusters
+
+# ── Orchestration + output ──────────────────────────────────────────────────────
+
+def parse_args():
+    p = argparse.ArgumentParser(
+        description='Stage 3 — per-type cluster+share risk model (replaces the GAT)')
+    p.add_argument('--city', choices=list(CITIES.keys()), default=None,
+                   help='restrict to one bbox for a quick test (default: all of GB)')
+    p.add_argument('--min-crashes', type=float, default=MIN_CRASHES)
+    p.add_argument('--out', default=str(OUTPUTS / 'risk_scores.csv'))
+    p.add_argument('--seed', type=int, default=42)
+    p.add_argument('--gpu', action='store_true')
+    return p.parse_args()
+
+
+def main():
+    args = parse_args()
+    t0 = time.time()
+
+    # §2 load the three Stage-2 outputs
+    segments, crashes, edges = load_data(args.city)
+    seg_index = {sid: i for i, sid in enumerate(segments['segment_id'])}
+    N = len(segments)
+
+    # §3 crash grids on DISJOINT windows (the leakage guard)
+    print('Aggregating crashes (history + target)...', flush=True)
+    hist_sev   = severity_matrix(crashes, seg_index, HISTORY_YEARS)
+    target_sev = severity_matrix(crashes, seg_index, TARGET_YEARS)
+
+    # §4 + §6 shared inputs, built once for all five types
+    print('Building adjacency + road-class features...', flush=True)
+    indptr, neighbors = build_adjacency(edges, seg_index)
+    rc_x, rc_cols = road_class_onehot(segments)
+
+    # §7 five fully independent models
+    risk = np.zeros((N, len(VEHICLE_TYPES)), dtype=np.float32)
+    importances = {}
+    for ti, tname in enumerate(VEHICLE_TYPES):
+        tt = time.time()
+        pred, imp, n_clusters = fit_predict_type(
+            segments, ti, hist_sev, target_sev, indptr, neighbors,
+            rc_x, rc_cols, args.min_crashes, args.seed, args.gpu)
+        risk[:, ti] = pred
+        importances[tname] = imp
+        print(f'  {tname:<11} clusters={n_clusters:>7,}  '
+              f'risk[min/mean/max]={pred.min():.3f}/{pred.mean():.3f}/{pred.max():.3f}'
+              f'  ({time.time()-tt:.1f}s)')
+
+    # §8a risk_scores.csv — the contract Stage 4/5 consume:
+    #     one row per (segment_id, vehicle_type) with the predicted share as risk.
+    print('Writing risk_scores.csv...', flush=True)
+    out = pd.concat([
+        pd.DataFrame({'segment_id':   segments['segment_id'].values,
+                      'vehicle_type': tname,
+                      'risk_score':   risk[:, ti]})
+        for ti, tname in enumerate(VEHICLE_TYPES)
+    ], ignore_index=True)
+    out.to_csv(args.out, index=False)
+
+    # §8b feature-importance side output (for the training plots hook)
+    imp_path = Path(args.out).with_name('risk_feature_importance.csv')
+    pd.DataFrame(importances).to_csv(imp_path, index_label='feature')
+
+    print(f'\nDone in {time.time()-t0:.1f}s.')
+    print(f'  risk surface:       {len(out):,} rows '
+          f'({N:,} segments × {len(VEHICLE_TYPES)} types)  -> {args.out}')
+    print(f'  feature importance: -> {imp_path}')
+
+
+if __name__ == '__main__':
+    main()

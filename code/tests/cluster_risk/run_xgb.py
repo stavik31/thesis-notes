@@ -52,6 +52,8 @@ def parse_args():
     p.add_argument('--predict-city', choices=list(C.CITIES.keys()), default=None,
                    help='Also write a production risk CSV for this city (routing)')
     p.add_argument('--out', default=None, help='Output CSV path for --predict-city')
+    p.add_argument('--objective', default='reg:squarederror',
+                   help='xgboost objective (reg:squarederror or reg:logistic)')
     p.add_argument('--seed', type=int, default=42)
     p.add_argument('--seg-share-k', type=float, default=1.0,
                    help='Smoothing constant for seg_share target')
@@ -168,7 +170,7 @@ def main():
         model = xgb.XGBRegressor(
             n_estimators=400, max_depth=6, learning_rate=0.05,
             subsample=0.8, colsample_bytree=0.8, min_child_weight=5,
-            objective='reg:squarederror', n_jobs=32,
+            objective=args.objective, n_jobs=32,
             tree_method='hist', device='cuda' if args.gpu else 'cpu',
             random_state=args.seed,
         )
